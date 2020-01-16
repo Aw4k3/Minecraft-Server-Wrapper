@@ -1,0 +1,14 @@
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Minecraft Server Wrapper.exe.config
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Minecraft Server Wrapper.exe
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Minecraft Server Wrapper.pdb
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.csprojAssemblyReference.cache
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\MainWindow.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\App.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper_MarkupCompile.cache
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper_MarkupCompile.lref
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\MainWindow.baml
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.g.resources
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft_Server_Wrapper.Properties.Resources.resources
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.csproj.GenerateResource.cache
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.exe
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.pdb

@@ -19,20 +19,21 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{x:Null}" BorderBrush="White" BorderThickness="1" CornerRadius="17.5">
-                            <ContentPresenter ContentSource="Content" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border x:Name="ButtonBorder" Background="#FF101010" BorderBrush="White" BorderThickness="2" CornerRadius="17.5">
+                            <ContentPresenter x:Name="ButtonContent" Content="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderThickness" Value="1"/>
-                                <Setter Property="Background" Value="#FF404040"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter TargetName="ButtonBorder" Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="Gray"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter TargetName="ButtonBorder" Property="BorderThickness" Value="2"/>
                                 <Setter Property="Background" Value="#FFA0A0A0"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="BorderBrush" Value="#FF404040"/>
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#FF404040"/>
                                 <Setter Property="Foreground" Value="#FF404040"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -47,6 +48,18 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <Style TargetType="{x:Type RichTextBox}">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </Style.Resources>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="BorderBrush" Value="{x:Null}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid MouseDown="Window_MouseDown">
         <DockPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Center" Width="1280" Background="#FF323280" LastChildFill="False">
@@ -58,21 +71,22 @@
         </DockPanel>
 
         <Label Content="Server File" HorizontalAlignment="Left" Height="35" Margin="10,31,0,0" VerticalAlignment="Top" Width="136" Foreground="White" FontSize="24"/>
-        <TextBox x:Name="ServerFilePath" HorizontalAlignment="Left" Height="35" Margin="146,31,0,0" TextWrapping="Wrap" Text="...\server.jar" VerticalAlignment="Top" Width="1009" Foreground="White" Background="#FF202020" BorderBrush="{x:Null}"/>
+        <TextBox x:Name="ServerFilePath" HorizontalAlignment="Left" Height="35" Margin="146,31,0,0" TextWrapping="Wrap" Text="...\server.jar" VerticalAlignment="Top" Width="1009" Foreground="White" Background="#FF202020" BorderBrush="{x:Null}" TextChanged="ServerFilePath_TextChanged"/>
         <Button x:Name="BrowseServerFile" Content="Browse" HorizontalAlignment="Left" Height="35" Margin="1160,31,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="BrowseServerFile_Click"/>
 
-        <ListBox x:Name="ServerOutput" HorizontalAlignment="Left" Height="567" Margin="10,75,0,0" VerticalAlignment="Top" Width="625" Background="#FF202020" BorderBrush="{x:Null}" Foreground="White"/>
-        <ListBox x:Name="PlayerList" HorizontalAlignment="Left" Height="567" Margin="645,75,0,0" VerticalAlignment="Top" Width="300" Background="#FF202020" BorderBrush="{x:Null}" Foreground="White"/>
+        <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="567" Margin="10,75,0,0" VerticalAlignment="Top" Width="625" Background="#FF202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True"/>
+        <ListBox x:Name="PlayerListWindow" HorizontalAlignment="Left" Height="567" Margin="645,75,0,0" VerticalAlignment="Top" Width="300" Background="#FF202020" BorderBrush="{x:Null}" Foreground="White"/>
         <Label Content="RAM Limit (MB)....." HorizontalAlignment="Left" Height="35" Margin="950,75,0,0" VerticalAlignment="Top" Width="205" Foreground="White" FontSize="24"/>
         <TextBox x:Name="ramLimit" HorizontalAlignment="Left" Height="35" Margin="1160,75,0,0" TextWrapping="Wrap" Text="2048" VerticalAlignment="Top" Width="110" RenderTransformOrigin="-0.336,0.062" HorizontalContentAlignment="Right" TextChanged="ramLimit_TextChanged"/>
-        <CheckBox Content="Force Online Mode" HorizontalAlignment="Left" Height="36" Margin="951,120,0,0" VerticalAlignment="Top" Width="316" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
-        <Button x:Name="StartStopServer" Content="Start Server" HorizontalAlignment="Left" Height="35" Margin="951,161,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}"/>
+        <CheckBox x:Name="ForceOnlineMode" Content="Force Online Mode" HorizontalAlignment="Left" Height="36" Margin="951,120,0,0" VerticalAlignment="Top" Width="316" VerticalContentAlignment="Center" FontSize="24" Foreground="White" Checked="ForceOnlineMode_Checked"/>
+        <Button x:Name="StartStopServer" Content="Start Server" HorizontalAlignment="Left" Height="35" Margin="951,161,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" Click="StartStopServer_Click"/>
         <Button x:Name="KickAll" Content="Kick All" HorizontalAlignment="Left" Height="35" Margin="951,208,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False"/>
         <Button x:Name="opAll" Content="OP All" HorizontalAlignment="Left" Height="35" Margin="951,255,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False"/>
         <Button x:Name="deopAll" Content="De-OP All" HorizontalAlignment="Left" Height="35" Margin="951,302,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False"/>
+        <Button x:Name="ShowInExplorer" Content="Open Server Location" HorizontalAlignment="Left" Height="35" Margin="951,607,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="ShowInExplorer_Click"/>
 
         <TextBox HorizontalAlignment="Left" Height="35" Margin="10,654,0,0" TextWrapping="Wrap" Text="/" VerticalAlignment="Top" Width="1145" Foreground="White" Background="#FF202020" BorderBrush="{x:Null}"/>
-        <Button Content="Execute" HorizontalAlignment="Left" Height="35" Margin="1160,654,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}"/>
+        <Button x:Name="SendCommand" Content="Execute" HorizontalAlignment="Left" Height="35" Margin="1160,654,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" IsEnabled="False"/>
 
 
         <Label Content="CPU Usage" HorizontalAlignment="Left" Margin="1061,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14"/>

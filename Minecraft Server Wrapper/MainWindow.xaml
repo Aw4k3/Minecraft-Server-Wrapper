@@ -49,16 +49,13 @@
             </Style.Resources>
         </Style>
         <Style TargetType="{x:Type RichTextBox}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Padding" Value="2,3"/>
             <Style.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="8"/>
                 </Style>
             </Style.Resources>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="BorderBrush" Value="{x:Null}"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
     </Window.Resources>
     <Grid MouseDown="Window_MouseDown">
@@ -74,7 +71,11 @@
         <TextBox x:Name="ServerFilePath" HorizontalAlignment="Left" Height="35" Margin="146,31,0,0" TextWrapping="Wrap" Text="...\server.jar" VerticalAlignment="Top" Width="1009" Foreground="White" Background="#FF202020" BorderBrush="{x:Null}" TextChanged="ServerFilePath_TextChanged"/>
         <Button x:Name="BrowseServerFile" Content="Browse" HorizontalAlignment="Left" Height="35" Margin="1160,31,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="BrowseServerFile_Click"/>
 
-        <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="567" Margin="10,75,0,0" VerticalAlignment="Top" Width="625" Background="#FF202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True"/>
+        <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="567" Margin="10,75,0,0" VerticalAlignment="Top" Width="625" Background="#FF202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True" FontSize="12">
+            <FlowDocument>
+                <Paragraph/>
+            </FlowDocument>
+        </RichTextBox>
         <ListBox x:Name="PlayerListWindow" HorizontalAlignment="Left" Height="567" Margin="645,75,0,0" VerticalAlignment="Top" Width="300" Background="#FF202020" BorderBrush="{x:Null}" Foreground="White"/>
         <Label Content="RAM Limit (MB)....." HorizontalAlignment="Left" Height="35" Margin="950,75,0,0" VerticalAlignment="Top" Width="205" Foreground="White" FontSize="24"/>
         <TextBox x:Name="ramLimit" HorizontalAlignment="Left" Height="35" Margin="1160,75,0,0" TextWrapping="Wrap" Text="2048" VerticalAlignment="Top" Width="110" RenderTransformOrigin="-0.336,0.062" HorizontalContentAlignment="Right" TextChanged="ramLimit_TextChanged"/>
@@ -85,15 +86,16 @@
         <Button x:Name="deopAll" Content="De-OP All" HorizontalAlignment="Left" Height="35" Margin="951,302,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False"/>
         <Button x:Name="ShowInExplorer" Content="Open Server Location" HorizontalAlignment="Left" Height="35" Margin="951,607,0,0" VerticalAlignment="Top" Width="316" Background="{x:Null}" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="ShowInExplorer_Click"/>
 
-        <TextBox HorizontalAlignment="Left" Height="35" Margin="10,654,0,0" TextWrapping="Wrap" Text="/" VerticalAlignment="Top" Width="1145" Foreground="White" Background="#FF202020" BorderBrush="{x:Null}"/>
-        <Button x:Name="SendCommand" Content="Execute" HorizontalAlignment="Left" Height="35" Margin="1160,654,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" IsEnabled="False"/>
-
-
-        <Label Content="CPU Usage" HorizontalAlignment="Left" Margin="1061,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14"/>
-        <ProgressBar x:Name="cpuUsageBar" HorizontalAlignment="Left" Height="11" Margin="1140,703,0,0" VerticalAlignment="Top" Width="100"/>
-        <Label x:Name="cpuUsageValue" Content="---%" HorizontalAlignment="Left" Margin="1240,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14"/>
+        <TextBox x:Name="CommandBox" HorizontalAlignment="Left" Height="35" Margin="10,654,0,0" TextWrapping="Wrap" Text="/" VerticalAlignment="Top" Width="1145" Foreground="White" Background="#FF202020" BorderBrush="{x:Null}" KeyDown="CommandBox_KeyDown"/>
+        <Button x:Name="SendCommand" Content="Execute" HorizontalAlignment="Left" Height="35" Margin="1160,654,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="SendCommand_Click"/>
 
         <Ellipse x:Name="StatusLight" Fill="#FFFF8000" HorizontalAlignment="Left" Height="17" Margin="4,698,0,0" Stroke="Black" VerticalAlignment="Top" Width="17"/>
-        <Label x:Name="StatusIndicator" Content="Server is not running" HorizontalAlignment="Left" Margin="21,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14" Width="1035"/>
+        <Label x:Name="StatusIndicator" Content="Server is not running" HorizontalAlignment="Left" Margin="21,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14" Width="897"/>
+
+        <Label Content="CPU Usage" HorizontalAlignment="Left" Margin="918,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14"/>
+        <ProgressBar x:Name="cpuUsageBar" HorizontalAlignment="Left" Height="11" Margin="997,703,0,0" VerticalAlignment="Top" Width="100"/>
+        <Label x:Name="cpuUsageValue" Content="---%" HorizontalAlignment="Left" Margin="1096,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14" Width="45"/>
+
+        <Label x:Name="ramUsageValue" Content="RAM Usage: ----MB" HorizontalAlignment="Left" Margin="1141,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14"/>
     </Grid>
 </Window>

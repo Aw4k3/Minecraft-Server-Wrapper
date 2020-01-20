@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using WinForms = System.Windows.Forms;
 using System.IO;
 using System.Windows.Media;
+using System.Timers;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -17,6 +18,7 @@ namespace Minecraft_Server_Wrapper
         public MainWindow()
         {
             InitializeComponent();
+
             if (File.Exists(ServerFilePath.Text))
             {
                 ShowInExplorer.IsEnabled = true;
@@ -41,6 +43,7 @@ namespace Minecraft_Server_Wrapper
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
+            ApplicationShutdownHandler();
             Application.Current.Shutdown();
         }
 
@@ -192,42 +195,70 @@ namespace Minecraft_Server_Wrapper
         {
             if (ForceOnlineMode.IsChecked == true)
             {
-                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar " + ServerFilePath.Text + " nogui -o");
+                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui -o");
             }
             else
             {
-                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar " + ServerFilePath.Text + " nogui");
+                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui");
             }
-            ServerArgs.RedirectStandardInput = ServerArgs.RedirectStandardError = true;
+            ServerArgs.RedirectStandardInput = true;
+            ServerArgs.RedirectStandardOutput = true;
             ServerArgs.UseShellExecute = false;
             ServerArgs.CreateNoWindow = true;
         }
 
-        //Start and Stop Server Handline
+        //RAM and CPU usage
+        private void UpdateCpuRamUsageTimer()
+        {
+            Timer timer = new Timer();
+            while (ServerIsRunning == true)
+            {
+                timer.Interval = 100;
+                timer.Elapsed += new ElapsedEventHandler(UpdateCpuRamUsage_ElapsedEventHandler);
+            }
+        }
+
+        private void UpdateCpuRamUsage_ElapsedEventHandler(object sender, EventArgs e)
+        {
+            ramUsageValue.Content = ServerProcess.WorkingSet64 / 1024 / 1024;
+        }
+
+        //If application is exited while server is running
+        private void ApplicationShutdownHandler()
+        {
+            if (ServerIsRunning == true)
+            {
+                ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
+                ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
+                ServerProcess.Kill();
+            }
+        }
+
+        //Start and Stop Server Handler
         private void StartStopServer_Click(object sender, RoutedEventArgs e)
         {
             //Check that server arguements are valid
             if (ServerArgs == null)
             {
-                ServerOutputWindow.AppendText("Error loading Server Arguements");
-                ServerOutputWindow.AppendText("Using default Server Arguements");
-                ServerOutputWindow.AppendText("java -Xmx" + ramLimit.Text + "M -jar " + ServerFilePath.Text + " nogui");
-                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar " + ServerFilePath.Text + " nogui");
-                ServerArgs.RedirectStandardInput = ServerArgs.RedirectStandardError = true;
+                ServerOutputWindow.AppendText("Error loading Server Arguements\n");
+                ServerOutputWindow.AppendText("Using default Server Arguements\n");
+                ServerOutputWindow.AppendText("java -Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui\n");
+                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui");
+                ServerArgs.RedirectStandardInput = true;
+                ServerArgs.RedirectStandardOutput = true;
                 ServerArgs.UseShellExecute = false;
                 ServerArgs.CreateNoWindow = true;
             }
 
-            
             if (ServerIsRunning == false)
             {
                 //Start Server
                 ServerProcess.StartInfo = ServerArgs;
                 ServerProcess.EnableRaisingEvents = true;
-                ServerProcess.ErrorDataReceived += new DataReceivedEventHandler(ServerOutput_ErrorDataRecieved);
+                ServerProcess.OutputDataReceived += new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
                 ServerProcess.Exited += new EventHandler(ServerClose_Exited);
                 ServerProcess.Start();
-                ServerProcess.BeginErrorReadLine();
+                ServerProcess.BeginOutputReadLine();
 
                 ServerIsRunning = true;
 
@@ -251,20 +282,25 @@ namespace Minecraft_Server_Wrapper
                 deopAll.IsEnabled = false;
                 SendCommand.IsEnabled = false;
 
-                ServerProcess.Close();
+                ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
+                ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
+                ServerProcess.Kill();
 
                 ServerIsRunning = false;
+
+                ServerOutputWindow.AppendText("\nServer Closed");
                 StartStopServer.Content = "Start Server";
                 StatusIndicator.Content = "Server closed";
                 StatusLightColor(1);
             }
         }
 
-        private void ServerOutput_ErrorDataRecieved(object sender, DataReceivedEventArgs e)
+        private void ServerOutput_OutputDataRecieved(object sender, DataReceivedEventArgs e)
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                ServerOutputWindow.AppendText(e.Data);
+                ServerOutputWindow.AppendText(e.Data + "\n");
+                ServerOutputWindow.ScrollToEnd();
             }));
         }
 
@@ -275,6 +311,13 @@ namespace Minecraft_Server_Wrapper
             {
                 if (ServerProcess.HasExited && !StartStopServer.IsPressed)
                 {
+
+                    ServerProcess.CancelOutputRead();
+                    ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
+                    ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
+                    
+                    ServerIsRunning = false;
+
                     StatusIndicator.Content = "Server Error";
                     StatusLightColor(0);
 
@@ -287,6 +330,34 @@ namespace Minecraft_Server_Wrapper
                     StartStopServer.Content = "Start Server";
                 }
             }));
+        }
+
+        //Commands
+        string[] CommandHistory;
+        int CommandHistoryIndex;
+        private void SendCommand_Click(object sender, RoutedEventArgs e)
+        {
+            ServerProcess.StandardInput.WriteLine(CommandBox.Text);
+            CommandHistoryIndex = 0;
+        }
+
+        private void CommandBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ServerProcess.StandardInput.WriteLine(CommandBox.Text);
+                CommandHistoryIndex = 0;
+            }
+
+            if (e.Key == Key.Up)
+            {
+
+            }
+
+            if (e.Key == Key.Down && CommandHistoryIndex >= 0)
+            {
+
+            }
         }
     }
 }

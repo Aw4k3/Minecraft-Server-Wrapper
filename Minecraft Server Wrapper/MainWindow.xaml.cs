@@ -7,6 +7,8 @@ using WinForms = System.Windows.Forms;
 using System.IO;
 using System.Windows.Media;
 using System.Timers;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -78,6 +80,7 @@ namespace Minecraft_Server_Wrapper
             return !_regex.IsMatch(text);
         }
 
+        DirectoryInfo WorkingDirectory;
         private void ServerCheck(string changedValue)
         {
             bool ramLimitTestPass = false;
@@ -92,6 +95,7 @@ namespace Minecraft_Server_Wrapper
                         ramLimitTestPass = true;
                         if (changedValue == "ramLimit")
                         {
+                            ramLimit.Foreground = new SolidColorBrush(Colors.Black);
                             StatusIndicator.Content = "RAM Limit changed to " + ramLimit.Text + "MB";
                         }
                     }
@@ -105,6 +109,7 @@ namespace Minecraft_Server_Wrapper
                     ramLimitTestPass = false;
                     if (changedValue == "ramLimit")
                     {
+                        ramLimit.Foreground = new SolidColorBrush(Colors.Red);
                         StatusIndicator.Content = "RAM Limit must be an integer!";
                     }
                 }
@@ -115,8 +120,10 @@ namespace Minecraft_Server_Wrapper
                     ServerPathExistsTestPass = true;
                     if (changedValue == "ServerPath")
                     {
+                        WorkingDirectory = new DirectoryInfo(Path.GetDirectoryName(ServerFilePath.Text));
                         StatusIndicator.Content = "Server path changed";
                         ShowInExplorer.IsEnabled = true;
+                        BackupWorld.IsEnabled = true;
                     }
                 }
                 else
@@ -128,6 +135,7 @@ namespace Minecraft_Server_Wrapper
                         {
                             StatusIndicator.Content = "Server path is invalid!";
                             ShowInExplorer.IsEnabled = false;
+                            BackupWorld.IsEnabled = false;
                         }
                     }
                     catch (Exception)
@@ -169,6 +177,7 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
+        //Setting Server Path
         private void ServerFilePath_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             ServerCheck("ServerPath");
@@ -180,10 +189,119 @@ namespace Minecraft_Server_Wrapper
             ServerCheck("ramLimit");
         }
 
-        //Show server in Explorer
+        //Show Server in Explorer
         private void ShowInExplorer_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(Path.GetDirectoryName(ServerFilePath.Text));
+        }
+
+        //Backup Server World
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                }
+            }
+        }
+
+        bool WorldFoldersKnown;
+        DirectoryInfo[] WorldFolders;
+        int WorldFoldersIndex = 0;
+
+        private void CreateWorldBackup()
+        {
+            BackupWorld.IsEnabled = false;
+
+            //Check backups directory exists
+            if (!Directory.Exists(WorkingDirectory + @"\Backups"))
+            {
+                Directory.CreateDirectory(WorkingDirectory + @"\Backups");
+            }
+
+            //Find all world folders in server directory
+            if (!WorldFoldersKnown)
+            {
+                DirectoryInfo[] Directories = WorkingDirectory.GetDirectories();
+
+                int i = 0;
+                foreach (var item in Directories)
+                {
+                    if (File.Exists(item + @"\level.dat"))
+                    {
+                        WorldFolders[i++] = item;
+                    }
+                }
+                ServerOutputWindow.AppendText("\nNumber of worlds found: " + i);
+                WorldFoldersKnown = true;
+            }
+
+            //Copy world folders to backup directory
+            foreach (var item in WorldFolders)
+            {
+                ServerOutputWindow.AppendText("\nBacking up \"" + item.Name + "\" to ...\\Backups\\" + item.Name);
+                DirectoryCopy(WorldFolders[WorldFoldersIndex].ToString(), WorkingDirectory + @"\Backups\ " + WorldFolders[WorldFoldersIndex].Name.ToString() + DateTime.Now, true);
+            }
+
+            BackupWorld.IsEnabled = true;
+        }
+
+        
+        private void BackupWorld_Click(object sender, RoutedEventArgs e)
+        {
+            CreateWorldBackup();
+        }
+
+        //Server Uptime handler
+        Stopwatch ServerUpTime = new Stopwatch();
+        DispatcherTimer UpdateServerUpTime = new DispatcherTimer();
+        private void ServerUpTimeHandler()
+        {
+            ServerUpTime.Start();
+            UpdateServerUpTime.Interval = new TimeSpan(0, 0, 1);
+
+            while (ServerIsRunning == true)
+            {
+                UpdateServerUpTime.Start();
+                UpdateServerUpTime.Tick += new EventHandler(UpdateServerUpTime_Tick);
+            }
+
+            ServerUpTime.Stop();
+            ServerUpTime.Reset();
+        }
+
+        private void UpdateServerUpTime_Tick(object sender, EventArgs e)
+        {
+            StatusIndicator.Content = "Server is Running | Uptime " + ServerUpTime.Elapsed;
         }
 
         //Running Server
@@ -231,7 +349,37 @@ namespace Minecraft_Server_Wrapper
                 ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
                 ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
                 ServerProcess.Kill();
+                ServerUpTime.Stop();
             }
+        }
+
+        //On server start and stop
+        private void OnServerStart()
+        {
+            ServerIsRunning = true;
+            
+            BrowseServerFile.IsEnabled = false;
+            KickAll.IsEnabled = true;
+            opAll.IsEnabled = true;
+            deopAll.IsEnabled = true;
+            SendCommand.IsEnabled = true;
+
+            StartStopServer.Content = "Stop Server";
+
+            StatusIndicator.Content = "Server is Running";
+            StatusLightColor(2);
+        }
+
+        private void OnServerStop()
+        {
+            BrowseServerFile.IsEnabled = true;
+            KickAll.IsEnabled = false;
+            opAll.IsEnabled = false;
+            deopAll.IsEnabled = false;
+            SendCommand.IsEnabled = false;
+
+            ServerIsRunning = false;
+            StartStopServer.Content = "Start Server";
         }
 
         //Start and Stop Server Handler
@@ -240,8 +388,8 @@ namespace Minecraft_Server_Wrapper
             //Check that server arguements are valid
             if (ServerArgs == null)
             {
-                ServerOutputWindow.AppendText("Error loading Server Arguements\n");
-                ServerOutputWindow.AppendText("Using default Server Arguements\n");
+                //ServerOutputWindow.AppendText("Error loading Server Arguements\n");
+                //ServerOutputWindow.AppendText("Using default Server Arguements\n");
                 ServerOutputWindow.AppendText("java -Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui\n");
                 ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui");
                 ServerArgs.RedirectStandardInput = true;
@@ -260,37 +408,20 @@ namespace Minecraft_Server_Wrapper
                 ServerProcess.Start();
                 ServerProcess.BeginOutputReadLine();
 
-                ServerIsRunning = true;
-
-                BrowseServerFile.IsEnabled = false;
-                KickAll.IsEnabled = true;
-                opAll.IsEnabled = true;
-                deopAll.IsEnabled = true;
-                SendCommand.IsEnabled = true;
-
-                StartStopServer.Content = "Stop Server";
-
-                StatusIndicator.Content = "Server is Running";
-                StatusLightColor(2);
+                OnServerStart();
             }
             else
             {
                 //Stop Server
-                BrowseServerFile.IsEnabled = true;
-                KickAll.IsEnabled = false;
-                opAll.IsEnabled = false;
-                deopAll.IsEnabled = false;
-                SendCommand.IsEnabled = false;
-
                 ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
                 ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
                 ServerProcess.Kill();
 
-                ServerIsRunning = false;
+                OnServerStop();
 
                 ServerOutputWindow.AppendText("\nServer Closed");
-                StartStopServer.Content = "Start Server";
-                StatusIndicator.Content = "Server closed";
+
+                StatusIndicator.Content = "Server Closed";
                 StatusLightColor(1);
             }
         }
@@ -321,42 +452,49 @@ namespace Minecraft_Server_Wrapper
                     StatusIndicator.Content = "Server Error";
                     StatusLightColor(0);
 
-                    BrowseServerFile.IsEnabled = true;
-                    KickAll.IsEnabled = false;
-                    opAll.IsEnabled = false;
-                    deopAll.IsEnabled = false;
-                    SendCommand.IsEnabled = false;
-
-                    StartStopServer.Content = "Start Server";
+                    OnServerStop();
                 }
             }));
         }
 
         //Commands
         string[] CommandHistory;
-        int CommandHistoryIndex;
+        int CommandHistoryIndex = 0; //Index of last stored command
+        int CommandToGetIndex;
+
+        private void UpdateCommandHistory()
+        {
+            if (CommandBox.Text != CommandHistory[CommandHistoryIndex])
+            {
+                CommandHistory[CommandHistoryIndex] = CommandBox.Text;
+                CommandToGetIndex = CommandHistory.Length;
+            }
+        }
+
         private void SendCommand_Click(object sender, RoutedEventArgs e)
         {
             ServerProcess.StandardInput.WriteLine(CommandBox.Text);
-            CommandHistoryIndex = 0;
+            //UpdateCommandHistory();
         }
 
         private void CommandBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && ServerIsRunning)
             {
                 ServerProcess.StandardInput.WriteLine(CommandBox.Text);
-                CommandHistoryIndex = 0;
+                //UpdateCommandHistory();
             }
 
-            if (e.Key == Key.Up)
-            {
-
+            if (e.Key == Key.Up && CommandToGetIndex <= CommandHistory.Length)
+            {/*
+                CommandBox.Text = CommandHistory[CommandToGetIndex];
+                CommandToGetIndex--;*/
             }
 
-            if (e.Key == Key.Down && CommandHistoryIndex >= 0)
-            {
-
+            if (e.Key == Key.Down && CommandToGetIndex >= CommandHistory.Length)
+            {/*
+                CommandBox.Text = CommandHistory[CommandToGetIndex];
+                CommandToGetIndex++;*/
             }
         }
     }

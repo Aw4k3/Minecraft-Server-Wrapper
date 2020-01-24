@@ -1,0 +1,52 @@
+[18:52:26] [Server thread/INFO]: Starting minecraft server version 1.14.4
+[18:52:26] [Server thread/INFO]: Loading properties
+[18:52:26] [Server thread/INFO]: Default game type: SURVIVAL
+[18:52:26] [Server thread/INFO]: Generating keypair
+[18:52:26] [Server thread/INFO]: Starting Minecraft server on *:25565
+[18:52:26] [Server thread/INFO]: Using default channel type
+[18:52:28] [Server thread/INFO]: This server is running CraftBukkit version git-Bukkit-3e3818b (MC: 1.14.4) (Implementing API version 1.14.4-R0.1-SNAPSHOT)
+[18:52:28] [Server thread/INFO]: Preparing level "world"
+[18:52:28] [Server thread/INFO]: Reloading ResourceManager: Default, bukkit
+[18:52:29] [Server thread/INFO]: Loaded 6 recipes
+[18:52:41] [Server thread/INFO]: Preparing start region for dimension 'world'/minecraft:overworld
+[18:52:43] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:43] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:43] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:43] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:43] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:44] [Server thread/INFO]: Preparing spawn area: 47%
+[18:52:47] [Server-Worker-1/INFO]: Preparing spawn area: 83%
+[18:52:47] [Server-Worker-2/INFO]: Preparing spawn area: 83%
+[18:52:47] [Server-Worker-2/INFO]: Preparing spawn area: 83%
+[18:52:47] [Server-Worker-2/INFO]: Preparing spawn area: 83%
+[18:52:47] [Server-Worker-2/INFO]: Preparing spawn area: 83%
+[18:52:47] [Server-Worker-2/INFO]: Preparing spawn area: 83%
+[18:52:47] [Server-Worker-2/INFO]: Preparing spawn area: 83%
+[18:52:48] [Server-Worker-3/INFO]: Preparing spawn area: 83%
+[18:52:48] [Server-Worker-1/INFO]: Preparing spawn area: 83%
+[18:52:49] [Server-Worker-1/INFO]: Preparing spawn area: 83%
+[18:52:49] [Server-Worker-1/INFO]: Preparing spawn area: 83%
+[18:52:50] [Server-Worker-2/INFO]: Preparing spawn area: 85%
+[18:52:51] [Server thread/INFO]: Preparing spawn area: 86%
+[18:52:51] [Server thread/INFO]: Preparing spawn area: 86%
+[18:52:51] [Server-Worker-3/INFO]: Preparing spawn area: 87%
+[18:52:52] [Server-Worker-3/INFO]: Preparing spawn area: 90%
+[18:52:52] [Server thread/INFO]: Preparing spawn area: 92%
+[18:52:52] [Server thread/INFO]: Time elapsed: 11220 ms
+[18:52:52] [Server thread/INFO]: Preparing start region for dimension 'world_nether'/minecraft:the_nether
+[18:52:53] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:53] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:53] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:54] [Server-Worker-3/INFO]: Preparing spawn area: 83%
+[18:52:54] [Server-Worker-2/INFO]: Preparing spawn area: 83%
+[18:52:55] [Server-Worker-3/INFO]: Preparing spawn area: 83%
+[18:52:55] [Server-Worker-2/INFO]: Preparing spawn area: 92%
+[18:52:55] [Server thread/INFO]: Time elapsed: 3259 ms
+[18:52:55] [Server thread/INFO]: Preparing start region for dimension 'world_the_end'/minecraft:the_end
+[18:52:57] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:57] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:57] [Server thread/INFO]: Preparing spawn area: 0%
+[18:52:57] [Server-Worker-1/INFO]: Preparing spawn area: 83%
+[18:52:57] [Server thread/INFO]: Time elapsed: 1843 ms
+[18:52:57] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
+[18:52:57] [Server thread/INFO]: Done (29.592s)! For help, type "help"

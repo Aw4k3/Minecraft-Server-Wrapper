@@ -233,14 +233,14 @@ namespace Minecraft_Server_Wrapper
                 }
             }
         }
-
+        
         bool WorldFoldersKnown;
         DirectoryInfo[] WorldFolders;
         int WorldFoldersIndex = 0;
-
-        private void CreateWorldBackup()
+        /*private async void CreateWorldBackup()
         {
             BackupWorld.IsEnabled = false;
+            BackupWorld.Content = "Backing up Worlds";
 
             //Check backups directory exists
             if (!Directory.Exists(WorkingDirectory + @"\Backups"))
@@ -272,13 +272,57 @@ namespace Minecraft_Server_Wrapper
                 DirectoryCopy(WorldFolders[WorldFoldersIndex].ToString(), WorkingDirectory + @"\Backups\ " + WorldFolders[WorldFoldersIndex].Name.ToString() + DateTime.Now, true);
             }
 
+            BackupWorld.Content = "Backup Server World(s)";
             BackupWorld.IsEnabled = true;
-        }
-
+        }*/
         
         private void BackupWorld_Click(object sender, RoutedEventArgs e)
         {
-            CreateWorldBackup();
+            Dispatcher.Invoke(new Action(() => {
+                BackupWorld.IsEnabled = false;
+                BackupWorld.Content = "Backing up Worlds";
+
+                //Check backups directory exists
+                if (!Directory.Exists(WorkingDirectory + @"\Backups"))
+                {
+                    Directory.CreateDirectory(WorkingDirectory + @"\Backups");
+                }
+
+                //Find all world folders in server directory
+                if (!WorldFoldersKnown)
+                {
+                    DirectoryInfo[] Directories = WorkingDirectory.GetDirectories();
+
+                    int i = 0;
+                    foreach (var item in Directories)
+                    {
+                        if (File.Exists(item + @"\level.dat"))
+                        {
+                            WorldFolders[i++] = new DirectoryInfo(item.ToString());
+                            //WorldFolders[i++] = item;
+                        }
+                    }
+                    ServerOutputWindow.AppendText("\nNumber of worlds found: " + i);
+                    WorldFoldersKnown = true;
+                }
+
+                //Copy world folders to backup directory
+                try
+                {
+                    foreach (var item in WorldFolders)
+                    {
+                        ServerOutputWindow.AppendText("\nBacking up \"" + item.Name + "\" to ...\\Backups\\" + item.Name);
+                        DirectoryCopy(WorldFolders[WorldFoldersIndex].ToString(), WorkingDirectory + @"\Backups\ " + WorldFolders[WorldFoldersIndex].Name.ToString() + DateTime.Now, true);
+                    }
+                }
+                catch (Exception f)
+                {
+                    ServerOutputWindow.AppendText(f.ToString());
+                }
+
+                BackupWorld.Content = "Backup Server World(s)";
+                BackupWorld.IsEnabled = true;
+            }));
         }
 
         //Server Uptime handler
@@ -314,6 +358,7 @@ namespace Minecraft_Server_Wrapper
             if (ForceOnlineMode.IsChecked == true)
             {
                 ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui -o");
+                StatusIndicator.Content = "Force online mode enabled";
             }
             else
             {
@@ -437,7 +482,6 @@ namespace Minecraft_Server_Wrapper
 
         private void ServerClose_Exited(object sender, EventArgs e)
         {
-
             Dispatcher.Invoke(new Action(() =>
             {
                 if (ServerProcess.HasExited && !StartStopServer.IsPressed)
@@ -479,6 +523,11 @@ namespace Minecraft_Server_Wrapper
 
         private void CommandBox_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Tab)
+            {
+                ServerProcess.StandardInput.Write(Key.Tab);
+            }
+
             if (e.Key == Key.Enter && ServerIsRunning)
             {
                 ServerProcess.StandardInput.WriteLine(CommandBox.Text);

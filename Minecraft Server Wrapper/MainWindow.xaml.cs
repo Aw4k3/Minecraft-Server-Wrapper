@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Timers;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Configuration;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -20,6 +21,9 @@ namespace Minecraft_Server_Wrapper
         public MainWindow()
         {
             InitializeComponent();
+            ramLimit.Text = ConfigurationManager.AppSettings["ServerRAM"];
+            ServerFilePath.Text = ConfigurationManager.AppSettings["ServerPath"];
+            ForceOnlineMode.IsChecked = Convert.ToBoolean(ConfigurationManager.AppSettings["ServerForceOnlineMode"]);
 
             if (File.Exists(ServerFilePath.Text))
             {
@@ -27,19 +31,17 @@ namespace Minecraft_Server_Wrapper
                 StartStopServer.IsEnabled = true;
                 StatusLightColor(1);
             }
-            else
+            if (ServerFilePath.Text == "...\\server.jar")
             {
-                try
-                {
-                    ShowInExplorer.IsEnabled = false;
-                    StartStopServer.IsEnabled = false;
-                    StatusIndicator.Content = "No server selected";
-                    StatusLightColor(0);
-                }
-                catch (Exception)
-                {
-
-                }
+                ShowInExplorer.IsEnabled = false;
+                StartStopServer.IsEnabled = false;
+                StatusIndicator.Content = "No server selected";
+                StatusLightColor(0);
+            }
+            if (!File.Exists(ServerFilePath.Text) && ServerFilePath.Text != "...\\server.jar")
+            {
+                StatusIndicator.Content = "Could not find server file at last known path";
+                StatusLightColor(0);
             }
         }
 
@@ -97,7 +99,10 @@ namespace Minecraft_Server_Wrapper
                         {
                             ramLimit.Foreground = new SolidColorBrush(Colors.Black);
                             StatusIndicator.Content = "RAM Limit changed to " + ramLimit.Text + "MB";
+                            ConfigurationManager.AppSettings.Remove("ServerRAM");
+                            ConfigurationManager.AppSettings.Add("ServerRAM", ramLimit.Text);
                         }
+
                     }
                     catch (Exception)
                     {
@@ -124,6 +129,8 @@ namespace Minecraft_Server_Wrapper
                         StatusIndicator.Content = "Server path changed";
                         ShowInExplorer.IsEnabled = true;
                         BackupWorld.IsEnabled = true;
+                        ConfigurationManager.AppSettings.Remove("ServerPath");
+                        ConfigurationManager.AppSettings.Add("ServerPath", ServerFilePath.Text);
                     }
                 }
                 else
@@ -325,29 +332,6 @@ namespace Minecraft_Server_Wrapper
             }));
         }
 
-        //Server Uptime handler
-        Stopwatch ServerUpTime = new Stopwatch();
-        DispatcherTimer UpdateServerUpTime = new DispatcherTimer();
-        private void ServerUpTimeHandler()
-        {
-            ServerUpTime.Start();
-            UpdateServerUpTime.Interval = new TimeSpan(0, 0, 1);
-
-            while (ServerIsRunning == true)
-            {
-                UpdateServerUpTime.Start();
-                UpdateServerUpTime.Tick += new EventHandler(UpdateServerUpTime_Tick);
-            }
-
-            ServerUpTime.Stop();
-            ServerUpTime.Reset();
-        }
-
-        private void UpdateServerUpTime_Tick(object sender, EventArgs e)
-        {
-            StatusIndicator.Content = "Server is Running | Uptime " + ServerUpTime.Elapsed;
-        }
-
         //Running Server
         ProcessStartInfo ServerArgs;
         Process ServerProcess = new Process();
@@ -355,15 +339,25 @@ namespace Minecraft_Server_Wrapper
         //Force Online mode toggle
         private void ForceOnlineMode_Checked(object sender, RoutedEventArgs e)
         {
-            if (ForceOnlineMode.IsChecked == true)
-            {
-                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui -o");
-                StatusIndicator.Content = "Force online mode enabled";
-            }
-            else
-            {
-                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui");
-            }
+            ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui -o");
+            StatusIndicator.Content = "Force online mode enabled";
+            
+            ServerArgs.RedirectStandardInput = true;
+            ServerArgs.RedirectStandardOutput = true;
+            ServerArgs.UseShellExecute = false;
+            ServerArgs.CreateNoWindow = true;
+
+            ConfigurationManager.AppSettings.Remove("ServerForceOnlineMode");
+            ConfigurationManager.AppSettings.Add("ServerForceOnlineMode", ForceOnlineMode.IsChecked.ToString());
+
+
+        }
+
+        private void ForceOnlineMode_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui");
+            StatusIndicator.Content = "Force online mode disabled";
+
             ServerArgs.RedirectStandardInput = true;
             ServerArgs.RedirectStandardOutput = true;
             ServerArgs.UseShellExecute = false;
@@ -394,7 +388,6 @@ namespace Minecraft_Server_Wrapper
                 ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
                 ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
                 ServerProcess.Kill();
-                ServerUpTime.Stop();
             }
         }
 
@@ -411,7 +404,7 @@ namespace Minecraft_Server_Wrapper
 
             StartStopServer.Content = "Stop Server";
 
-            StatusIndicator.Content = "Server is Running";
+            StatusIndicator.Content = "Server is Running | Server Process ID: " + ServerProcess.Id;
             StatusLightColor(2);
         }
 
@@ -443,7 +436,7 @@ namespace Minecraft_Server_Wrapper
                 ServerArgs.CreateNoWindow = true;
             }
 
-            if (ServerIsRunning == false)
+            if (!ServerIsRunning)
             {
                 //Start Server
                 ServerProcess.StartInfo = ServerArgs;
@@ -525,7 +518,7 @@ namespace Minecraft_Server_Wrapper
         {
             if (e.Key == Key.Tab)
             {
-                ServerProcess.StandardInput.Write(Key.Tab);
+                ServerProcess.StandardInput.Write(CommandBox.Text + Key.Tab);
             }
 
             if (e.Key == Key.Enter && ServerIsRunning)

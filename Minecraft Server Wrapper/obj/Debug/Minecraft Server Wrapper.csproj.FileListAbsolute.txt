@@ -12,3 +12,10 @@ C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrappe
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.csproj.GenerateResource.cache
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.exe
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.pdb
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Minecraft Server Wrapper.exe.manifest
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Minecraft Server Wrapper.application
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.TrustInfo.xml
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.exe.manifest
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.application
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerPropertiesManager.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerPropertiesManager.baml

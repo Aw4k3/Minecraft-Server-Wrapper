@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\
 Minecraft_Server_Wrapper
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\App.xaml
-2-303971620
+11151548125
 
-81489922904
+71202517245
 17477962218
-MainWindow.xaml;ServerPropertiesManager.xaml;
+MainWindow.xaml;
 
-True
+False
 

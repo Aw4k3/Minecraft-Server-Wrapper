@@ -18,12 +18,15 @@ namespace Minecraft_Server_Wrapper
     /// </summary>
     public partial class MainWindow : Window
     {
+        ServerWrapper serverWrapper = new ServerWrapper();
+
         public MainWindow()
         {
             InitializeComponent();
-            ramLimit.Text = ConfigurationManager.AppSettings["ServerRAM"];
-            ServerFilePath.Text = ConfigurationManager.AppSettings["ServerPath"];
-            ForceOnlineMode.IsChecked = Convert.ToBoolean(ConfigurationManager.AppSettings["ServerForceOnlineMode"]);
+            ramLimit.Text = serverWrapper.ServerRAM.ToString();
+            ServerFilePath.Text = serverWrapper.ServerPath;
+            ForceOnlineMode.IsChecked = serverWrapper.ServerForceOnlineMode;
+            RunServerOnStartUp.IsChecked = serverWrapper.RunServerOnStartUp;
 
             if (File.Exists(ServerFilePath.Text))
             {
@@ -42,6 +45,10 @@ namespace Minecraft_Server_Wrapper
             {
                 StatusIndicator.Content = "Could not find server file at last known path";
                 StatusLightColor(0);
+            }
+            if (File.Exists(ServerFilePath.Text) && RunServerOnStartUp.IsChecked == true)
+            {
+                OnServerStart();
             }
         }
 
@@ -99,8 +106,8 @@ namespace Minecraft_Server_Wrapper
                         {
                             ramLimit.Foreground = new SolidColorBrush(Colors.Black);
                             StatusIndicator.Content = "RAM Limit changed to " + ramLimit.Text + "MB";
-                            ConfigurationManager.AppSettings.Remove("ServerRAM");
-                            ConfigurationManager.AppSettings.Add("ServerRAM", ramLimit.Text);
+                            serverWrapper.ServerRAM = Convert.ToInt32(ramLimit.Text);
+                            serverWrapper.Save();
                         }
 
                     }
@@ -129,8 +136,9 @@ namespace Minecraft_Server_Wrapper
                         StatusIndicator.Content = "Server path changed";
                         ShowInExplorer.IsEnabled = true;
                         BackupWorld.IsEnabled = true;
-                        ConfigurationManager.AppSettings.Remove("ServerPath");
-                        ConfigurationManager.AppSettings.Add("ServerPath", ServerFilePath.Text);
+                        EditServerProperties.IsEnabled = true;
+                        serverWrapper.ServerPath = ServerFilePath.Text;
+                        serverWrapper.Save();
                     }
                 }
                 else
@@ -143,6 +151,7 @@ namespace Minecraft_Server_Wrapper
                             StatusIndicator.Content = "Server path is invalid!";
                             ShowInExplorer.IsEnabled = false;
                             BackupWorld.IsEnabled = false;
+                            EditServerProperties.IsEnabled = false;
                         }
                     }
                     catch (Exception)
@@ -170,6 +179,18 @@ namespace Minecraft_Server_Wrapper
 
         //Main Code
         bool ServerIsRunning = false;
+
+        //Auto Start Server Settings
+        private void RunServerOnStartUp_Checked(object sender, RoutedEventArgs e)
+        {
+            serverWrapper.RunServerOnStartUp = true;
+        }
+
+        private void RunServerOnStartUp_Unchecked(object sender, RoutedEventArgs e)
+        {
+            serverWrapper.RunServerOnStartUp = false;
+        }
+
         //Managing Server Path
         private void BrowseServerFile_Click(object sender, RoutedEventArgs e)
         {
@@ -196,6 +217,20 @@ namespace Minecraft_Server_Wrapper
             ServerCheck("ramLimit");
         }
 
+        private void ramLimit_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+
+            if (Convert.ToInt32(ramLimit.Text) + (e.Delta / 10 - 2) >= 0)
+            {
+                ramLimit.Text = (Convert.ToInt32(ramLimit.Text) + (e.Delta / 10 - 2)).ToString();
+            }
+            else
+            {
+                ramLimit.Text = "0";
+            }
+            ramLimit.ScrollToHome();
+        }
+
         //Show Server in Explorer
         private void ShowInExplorer_Click(object sender, RoutedEventArgs e)
         {
@@ -203,7 +238,7 @@ namespace Minecraft_Server_Wrapper
         }
 
         //Backup Server World
-        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        private void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
             // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
@@ -332,6 +367,13 @@ namespace Minecraft_Server_Wrapper
             }));
         }
 
+        //Editing Server Properties File
+        private void EditServerProperties_Click(object sender, RoutedEventArgs e)
+        {
+            ServerPropertiesManager serverPropertiesManager = new ServerPropertiesManager();
+            serverPropertiesManager.Show();
+        }
+
         //Running Server
         ProcessStartInfo ServerArgs;
         Process ServerProcess = new Process();
@@ -347,8 +389,7 @@ namespace Minecraft_Server_Wrapper
             ServerArgs.UseShellExecute = false;
             ServerArgs.CreateNoWindow = true;
 
-            ConfigurationManager.AppSettings.Remove("ServerForceOnlineMode");
-            ConfigurationManager.AppSettings.Add("ServerForceOnlineMode", ForceOnlineMode.IsChecked.ToString());
+            serverWrapper.ServerForceOnlineMode = true;
 
 
         }
@@ -362,6 +403,8 @@ namespace Minecraft_Server_Wrapper
             ServerArgs.RedirectStandardOutput = true;
             ServerArgs.UseShellExecute = false;
             ServerArgs.CreateNoWindow = true;
+
+            serverWrapper.ServerForceOnlineMode = false;
         }
 
         //RAM and CPU usage
@@ -394,6 +437,25 @@ namespace Minecraft_Server_Wrapper
         //On server start and stop
         private void OnServerStart()
         {
+            //Check that server arguements are valid
+            if (ServerArgs == null)
+            {
+                ServerOutputWindow.AppendText("java -Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui\n");
+                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui");
+                ServerArgs.RedirectStandardInput = true;
+                ServerArgs.RedirectStandardOutput = true;
+                ServerArgs.UseShellExecute = false;
+                ServerArgs.CreateNoWindow = true;
+            }
+
+            //Start Server
+            ServerProcess.StartInfo = ServerArgs;
+            ServerProcess.EnableRaisingEvents = true;
+            ServerProcess.OutputDataReceived += new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
+            ServerProcess.Exited += new EventHandler(ServerClose_Exited);
+            ServerProcess.Start();
+            ServerProcess.BeginOutputReadLine();
+
             ServerIsRunning = true;
             
             BrowseServerFile.IsEnabled = false;
@@ -423,29 +485,8 @@ namespace Minecraft_Server_Wrapper
         //Start and Stop Server Handler
         private void StartStopServer_Click(object sender, RoutedEventArgs e)
         {
-            //Check that server arguements are valid
-            if (ServerArgs == null)
-            {
-                //ServerOutputWindow.AppendText("Error loading Server Arguements\n");
-                //ServerOutputWindow.AppendText("Using default Server Arguements\n");
-                ServerOutputWindow.AppendText("java -Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui\n");
-                ServerArgs = new ProcessStartInfo("java", "-Xmx" + ramLimit.Text + "M -jar \"" + ServerFilePath.Text + "\" nogui");
-                ServerArgs.RedirectStandardInput = true;
-                ServerArgs.RedirectStandardOutput = true;
-                ServerArgs.UseShellExecute = false;
-                ServerArgs.CreateNoWindow = true;
-            }
-
             if (!ServerIsRunning)
             {
-                //Start Server
-                ServerProcess.StartInfo = ServerArgs;
-                ServerProcess.EnableRaisingEvents = true;
-                ServerProcess.OutputDataReceived += new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
-                ServerProcess.Exited += new EventHandler(ServerClose_Exited);
-                ServerProcess.Start();
-                ServerProcess.BeginOutputReadLine();
-
                 OnServerStart();
             }
             else

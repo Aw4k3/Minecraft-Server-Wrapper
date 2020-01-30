@@ -1,0 +1,150 @@
+﻿<Window x:Class="Minecraft_Server_Wrapper.ServerPropertiesManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Minecraft_Server_Wrapper"
+        mc:Ignorable="d"
+        Title="ServerPropertiesManager" Height="800" Width="400" Foreground="White" Background="#FF101010" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontFamily="Bahnschrift Light" FontSize="18">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="RoundedButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="ButtonBorder" BorderThickness="2" CornerRadius="17.5">
+                            <Border.BorderBrush>
+                                <LinearGradientBrush EndPoint="0,0.5" StartPoint="1,0.5">
+                                    <GradientStop x:Name="ButtonBorderGradStop1" Color="White" Offset="0"/>
+                                    <GradientStop x:Name="ButtonBorderGradStop2" Color="White" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <ContentPresenter x:Name="ButtonContent" Content="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop1" Storyboard.TargetProperty="Color" To="#6eb2ff" Duration="00:00:00.100"/>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop2" Storyboard.TargetProperty="Color" To="#f9abff" Duration="00:00:00.200"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop1" Storyboard.TargetProperty="Color" To="White" Duration="00:00:00.100"/>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop2" Storyboard.TargetProperty="Color" To="White" Duration="00:00:00.200"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush">
+                                    <Setter.Value>
+                                        <LinearGradientBrush EndPoint="0,0.5" StartPoint="1,0.5">
+                                            <GradientStop Color="#FF404040" Offset="0"/>
+                                            <GradientStop Color="#FF404040" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="17.5"/>
+                    <Setter Property="Padding" Value="12,7"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid>
+                            <Label Foreground="White">
+                                <ContentPresenter ContentSource="Content"/>
+                            </Label>
+                            <Rectangle x:Name="ToggleSwitch" Width="60"  Height="30" Fill="#FF202020" RadiusX="15" RadiusY="15" HorizontalAlignment="Right"/>
+                            <Rectangle x:Name="Toggle" Width="22"  Height="22" Fill="DarkRed" RadiusX="11" RadiusY="11" Margin="356,0,0,0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <EventTrigger RoutedEvent="Checked">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation To="Lime" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
+                                        <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
+                                        <ThicknessAnimation To="296,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Unchecked">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation To="DarkRed" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
+                                        <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
+                                        <ThicknessAnimation To="356,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="18" Padding="7">
+                                <ContentPresenter Content="{TemplateBinding Text}"/>
+                            </Border>
+                            <Polygon Points="93,15 98,22, 103,15" Fill="Gray" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <DockPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Center" Width="400" Background="#FF323280" LastChildFill="False">
+            <Grid Height="20" Width="400">
+                <Label Content="Server Properties Editor" Height="20" Foreground="White" FontSize="11" MouseDown="Window_MouseDown"/>
+                <Button x:Name="Exit" Content="X" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="380,0,0,0" Click="Exit_Click"/>
+                <Button x:Name="Minimize" Content="-" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="360,0,20,0" Click="Minimize_Click"/>
+            </Grid>
+        </DockPanel>
+        <Label Content="Spawn Protection" HorizontalAlignment="Left" Height="36" Margin="7,30,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="SpawnProtectionValue" HorizontalAlignment="Left" Height="36" Margin="283,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Max Tick Time" HorizontalAlignment="Left" Height="36" Margin="7,71,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="MaxTickTimeValue" HorizontalAlignment="Left" Height="36" Margin="283,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Query Port" HorizontalAlignment="Left" Height="36" Margin="7,112,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="QueryPortValue" HorizontalAlignment="Left" Height="36" Margin="283,112,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Generator Settings" HorizontalAlignment="Left" Height="36" Margin="7,153,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="GeneratingSettingsValue" HorizontalAlignment="Left" Height="36" Margin="283,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="ForceGamemodeValue" Content="Force Gamemode" HorizontalAlignment="Left" Height="36" Margin="7,194,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="AllowNetherValue" Content="Allow Nether" HorizontalAlignment="Left" Height="36" Margin="7,235,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="EnforceWhitelistValue" Content="Enforce Whitelist" HorizontalAlignment="Left" Height="36" Margin="7,276,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Gamemode" HorizontalAlignment="Left" Height="36" Margin="7,317,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <ComboBox x:Name="GamemodeValue" HorizontalAlignment="Left" Height="36" Margin="283,317,0,0" VerticalAlignment="Top" Width="110">
+            <ComboBoxItem Content="Survival" IsSelected="True"/>
+            <ComboBoxItem Content="Creative"/>
+            <ComboBoxItem Content="Adventure"/>
+            <ComboBoxItem Content="Spectator"/>
+        </ComboBox>
+
+
+    </Grid>
+</Window>

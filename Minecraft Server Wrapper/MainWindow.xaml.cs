@@ -9,7 +9,6 @@ using System.Windows.Media;
 using System.Timers;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using System.Configuration;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -19,6 +18,7 @@ namespace Minecraft_Server_Wrapper
     public partial class MainWindow : Window
     {
         ServerWrapper serverWrapper = new ServerWrapper();
+        ServerPropertiesManager serverPropertiesManager = new ServerPropertiesManager();
 
         public MainWindow()
         {
@@ -136,7 +136,12 @@ namespace Minecraft_Server_Wrapper
                         StatusIndicator.Content = "Server path changed";
                         ShowInExplorer.IsEnabled = true;
                         BackupWorld.IsEnabled = true;
-                        EditServerProperties.IsEnabled = true;
+                        if (File.Exists(WorkingDirectory + @"\server.properties"))
+                        {
+                            EditServerProperties.IsEnabled = true;
+                            serverPropertiesManager.ServerPropertiesValues = File.ReadAllLines(WorkingDirectory + @"\server.properties");
+                            serverPropertiesManager.LoadSettings();
+                        }
                         serverWrapper.ServerPath = ServerFilePath.Text;
                         serverWrapper.Save();
                     }
@@ -228,7 +233,6 @@ namespace Minecraft_Server_Wrapper
             {
                 ramLimit.Text = "0";
             }
-            ramLimit.ScrollToHome();
         }
 
         //Show Server in Explorer
@@ -370,7 +374,6 @@ namespace Minecraft_Server_Wrapper
         //Editing Server Properties File
         private void EditServerProperties_Click(object sender, RoutedEventArgs e)
         {
-            ServerPropertiesManager serverPropertiesManager = new ServerPropertiesManager();
             serverPropertiesManager.Show();
         }
 

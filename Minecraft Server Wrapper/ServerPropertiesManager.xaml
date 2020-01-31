@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minecraft_Server_Wrapper"
         mc:Ignorable="d"
-        Title="ServerPropertiesManager" Height="800" Width="400" Foreground="White" Background="#FF101010" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontFamily="Bahnschrift Light" FontSize="18">
+        Title="ServerPropertiesManager" Height="800" Width="1200" Foreground="White" Background="#FF101010" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontFamily="Bahnschrift Light" FontSize="18">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" x:Key="RoundedButton">
             <Setter Property="Template">
@@ -63,6 +63,52 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <Style x:Key="SearchBox" TargetType="{x:Type TextBox}">
+            <Setter Property="Foreground" Value="#FFBFBFBF"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="SearchBorder" BorderThickness="0,0,0,1" Cursor="IBeam">
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop x:Name="SearchBorderGradStop1" Color="#FFBFBFBF" Offset="0"/>
+                                    <GradientStop x:Name="SearchBorderGradStop2" Color="#FFBFBFBF" Offset="0.5"/>
+                                    <GradientStop x:Name="SearchBorderGradStop3" Color="#FFBFBFBF" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <Grid>
+                                <Image x:Name="SearchIcon" Width="23" Height="23" Source="SearchIcon.png" HorizontalAlignment="Left" Opacity="0.75"/>
+                                <ContentPresenter Content="{TemplateBinding Text}" VerticalAlignment="Bottom" Margin="25,0,13,0"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="GotKeyboardFocus">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="00:00:00.200" To="#FF00E8FF" Storyboard.TargetName="SearchBorderGradStop1" Storyboard.TargetProperty="Color"/>
+                                        <ColorAnimation Duration="00:00:00.200" To="#FF00AEFF" Storyboard.TargetName="SearchBorderGradStop2" Storyboard.TargetProperty="Color"/>
+                                        <ColorAnimation Duration="00:00:00.200" To="#FF00E8FF" Storyboard.TargetName="SearchBorderGradStop3" Storyboard.TargetProperty="Color"/>
+                                        <ColorAnimation Duration="00:00:00.200" To="White" Storyboard.TargetProperty="(Foreground).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation Duration="00:00:00.200" To="1" Storyboard.TargetName="SearchIcon" Storyboard.TargetProperty="Opacity"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="LostKeyboardFocus">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="00:00:00.200" To="#FFBFBFBF" Storyboard.TargetName="SearchBorderGradStop1" Storyboard.TargetProperty="Color"/>
+                                        <ColorAnimation Duration="00:00:00.200" To="#FFBFBFBF" Storyboard.TargetName="SearchBorderGradStop2" Storyboard.TargetProperty="Color"/>
+                                        <ColorAnimation Duration="00:00:00.200" To="#FFBFBFBF" Storyboard.TargetName="SearchBorderGradStop3" Storyboard.TargetProperty="Color"/>
+                                        <ColorAnimation Duration="00:00:00.200" To="#FFBFBFBF" Storyboard.TargetProperty="(Foreground).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation Duration="00:00:00.200" To="0.75" Storyboard.TargetName="SearchIcon" Storyboard.TargetProperty="Opacity"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -119,32 +165,116 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <DockPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Center" Width="400" Background="#FF323280" LastChildFill="False">
-            <Grid Height="20" Width="400">
+        <DockPanel Height="20" VerticalAlignment="Top" Width="1200" Background="#FF323280" LastChildFill="False">
+            <Grid Height="20" Width="1200">
                 <Label Content="Server Properties Editor" Height="20" Foreground="White" FontSize="11" MouseDown="Window_MouseDown"/>
-                <Button x:Name="Exit" Content="X" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="380,0,0,0" Click="Exit_Click"/>
-                <Button x:Name="Minimize" Content="-" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="360,0,20,0" Click="Minimize_Click"/>
+                <Button x:Name="Exit" Content="X" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="1180,0,0,0" Click="Exit_Click"/>
+                <Button x:Name="Minimize" Content="-" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="1160,0,20,0" Click="Minimize_Click"/>
             </Grid>
         </DockPanel>
-        <Label Content="Spawn Protection" HorizontalAlignment="Left" Height="36" Margin="7,30,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
-        <TextBox x:Name="SpawnProtectionValue" HorizontalAlignment="Left" Height="36" Margin="283,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
-        <Label Content="Max Tick Time" HorizontalAlignment="Left" Height="36" Margin="7,71,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
-        <TextBox x:Name="MaxTickTimeValue" HorizontalAlignment="Left" Height="36" Margin="283,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
-        <Label Content="Query Port" HorizontalAlignment="Left" Height="36" Margin="7,112,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
-        <TextBox x:Name="QueryPortValue" HorizontalAlignment="Left" Height="36" Margin="283,112,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
-        <Label Content="Generator Settings" HorizontalAlignment="Left" Height="36" Margin="7,153,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
-        <TextBox x:Name="GeneratingSettingsValue" HorizontalAlignment="Left" Height="36" Margin="283,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
-        <CheckBox x:Name="ForceGamemodeValue" Content="Force Gamemode" HorizontalAlignment="Left" Height="36" Margin="7,194,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
-        <CheckBox x:Name="AllowNetherValue" Content="Allow Nether" HorizontalAlignment="Left" Height="36" Margin="7,235,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
-        <CheckBox x:Name="EnforceWhitelistValue" Content="Enforce Whitelist" HorizontalAlignment="Left" Height="36" Margin="7,276,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
-        <Label Content="Gamemode" HorizontalAlignment="Left" Height="36" Margin="7,317,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
-        <ComboBox x:Name="GamemodeValue" HorizontalAlignment="Left" Height="36" Margin="283,317,0,0" VerticalAlignment="Top" Width="110">
+
+        <TextBox x:Name="SettingSearch" Text="Search Settings" HorizontalAlignment="Left" Height="30" Margin="10,24,0,0" VerticalAlignment="Top" Width="1183" HorizontalContentAlignment="Left" Style="{StaticResource SearchBox}" FontSize="22" MouseRightButtonUp="SettingSearch_MouseRightButtonUp" TextChanged="SettingSearch_TextChanged"/>
+
+        <Rectangle Width="1" Height="740" Fill="White" Margin="400,57,799,3"/>
+        <Rectangle Width="1" Height="740" Fill="White" Margin="800,57,399,3"/>
+        <Label Content="Spawn Protection" HorizontalAlignment="Left" Height="36" Margin="7,60,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="SpawnProtectionValue" HorizontalAlignment="Left" Height="36" Margin="283,60,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Max Tick Time" HorizontalAlignment="Left" Height="36" Margin="7,101,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="MaxTickTimeValue" HorizontalAlignment="Left" Height="36" Margin="283,101,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Query Port" HorizontalAlignment="Left" Height="36" Margin="7,142,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="QueryPortValue" HorizontalAlignment="Left" Height="36" Margin="283,142,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Generator Settings" HorizontalAlignment="Left" Height="36" Margin="7,183,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="GeneratingSettingsValue" HorizontalAlignment="Left" Height="36" Margin="283,183,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="ForceGamemodeValue" Content="Force Gamemode" HorizontalAlignment="Left" Height="36" Margin="7,224,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="AllowNetherValue" Content="Allow Nether" HorizontalAlignment="Left" Height="36" Margin="7,265,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="EnforceWhitelistValue" Content="Enforce Whitelist" HorizontalAlignment="Left" Height="36" Margin="7,306,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Gamemode" HorizontalAlignment="Left" Height="36" Margin="7,347,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <ComboBox x:Name="GamemodeValue" HorizontalAlignment="Left" Height="36" Margin="283,347,0,0" VerticalAlignment="Top" Width="110">
             <ComboBoxItem Content="Survival" IsSelected="True"/>
             <ComboBoxItem Content="Creative"/>
             <ComboBoxItem Content="Adventure"/>
             <ComboBoxItem Content="Spectator"/>
         </ComboBox>
+        <CheckBox x:Name="BroadcastConsoleToOpsValue" Content="Broadcast console to OPs" HorizontalAlignment="Left" Height="36" Margin="7,388,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="EnableQueryValue" Content="Enable Query" HorizontalAlignment="Left" Height="36" Margin="7,429,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Player Idle Timout" HorizontalAlignment="Left" Height="36" Margin="7,470,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="PlayerIdleTimoutValue" HorizontalAlignment="Left" Height="36" Margin="283,470,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Difficulty" HorizontalAlignment="Left" Height="36" Margin="7,511,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <ComboBox x:Name="DifficultyValue" HorizontalAlignment="Left" Height="36" Margin="283,511,0,0" VerticalAlignment="Top" Width="110">
+            <ComboBoxItem Content="Peaceful"/>
+            <ComboBoxItem Content="Easy"/>
+            <ComboBoxItem Content="Normal" IsSelected="True"/>
+            <ComboBoxItem Content="Hard"/>
+        </ComboBox>
+        <CheckBox x:Name="SpawnMonstersValue" Content="Spawn Monsters" HorizontalAlignment="Left" Height="36" Margin="7,552,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="BroadcastRconToOpsValue" Content="Broadcast R-Con to OPs" HorizontalAlignment="Left" Height="36" Margin="7,593,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="OP Permission Level" HorizontalAlignment="Left" Height="36" Margin="7,634,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <ComboBox x:Name="OpPermissionLevelValue" HorizontalAlignment="Left" Height="36" Margin="283,634,0,0" VerticalAlignment="Top" Width="110">
+            <ComboBoxItem Content="1"/>
+            <ComboBoxItem Content="2"/>
+            <ComboBoxItem Content="3"/>
+            <ComboBoxItem Content="4" IsSelected="True"/>
+        </ComboBox>
+        <CheckBox x:Name="PvpValue" Content="PVP" HorizontalAlignment="Left" Height="36" Margin="7,675,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="SnooperEnabledValue" Content="Snooper Enabled" HorizontalAlignment="Left" Height="36" Margin="7,716,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Level Type" HorizontalAlignment="Left" Height="36" Margin="7,757,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <ComboBox x:Name="LevelTypeValue" HorizontalAlignment="Left" Height="36" Margin="283,757,0,0" VerticalAlignment="Top" Width="110">
+            <ComboBoxItem Content="Default"/>
+            <ComboBoxItem Content="Flat"/>
+            <ComboBoxItem Content="Large Biomes" IsSelected="True"/>
+            <ComboBoxItem Content="Amplified"/>
+            <ComboBoxItem Content="Buffet"/>
+        </ComboBox>
+        <CheckBox x:Name="HardcoreValue" Content="Hardcore" HorizontalAlignment="Left" Height="36" Margin="407,60,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="EnableCommandBlockValue" Content="Enable Command Block" HorizontalAlignment="Left" Height="36" Margin="407,101,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Max Players" HorizontalAlignment="Left" Height="36" Margin="407,142,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="MaxPlayersValue" HorizontalAlignment="Left" Height="36" Margin="683,142,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Network Compression Threshold" HorizontalAlignment="Left" Height="36" Margin="407,183,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="17" VerticalContentAlignment="Bottom"/>
+        <TextBox x:Name="NetworkCompressionThresholdValue" HorizontalAlignment="Left" Height="36" Margin="683,183,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Resource Pack Sha1" HorizontalAlignment="Left" Height="36" Margin="407,224,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ResourcePackSha1Value" HorizontalAlignment="Left" Height="36" Margin="683,224,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Max World Size" HorizontalAlignment="Left" Height="36" Margin="407,265,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="MaxWorldSizeValue" HorizontalAlignment="Left" Height="36" Margin="683,265,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Function Permission Level" HorizontalAlignment="Left" Height="36" Margin="407,306,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="20" VerticalContentAlignment="Bottom"/>
+        <ComboBox x:Name="FunctionPermissionLevelValue" HorizontalAlignment="Left" Height="36" Margin="683,306,0,0" VerticalAlignment="Top" Width="110">
+            <ComboBoxItem Content="1"/>
+            <ComboBoxItem Content="2"/>
+            <ComboBoxItem Content="3"/>
+            <ComboBoxItem Content="4" IsSelected="True"/>
+        </ComboBox>
+        <Label Content="R-Con Port" HorizontalAlignment="Left" Height="36" Margin="407,347,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="RConPortValue" HorizontalAlignment="Left" Height="36" Margin="683,347,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Server Port" HorizontalAlignment="Left" Height="36" Margin="407,388,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ServerPortValue" HorizontalAlignment="Left" Height="36" Margin="683,388,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="DebugValue" Content="Debug" HorizontalAlignment="Left" Height="36" Margin="407,429,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Server IP" HorizontalAlignment="Left" Height="36" Margin="407,470,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ServerIpValue" HorizontalAlignment="Left" Height="36" Margin="683,470,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="SpawnNPCsValue" Content="Spawn NPCs" HorizontalAlignment="Left" Height="36" Margin="407,511,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="AllowFlightValue" Content="Allow Flight" HorizontalAlignment="Left" Height="36" Margin="407,552,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Level Name" HorizontalAlignment="Left" Height="36" Margin="407,593,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="LevelNameValue" HorizontalAlignment="Left" Height="36" Margin="683,593,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="View Distance" HorizontalAlignment="Left" Height="36" Margin="407,634,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ViewDistanceValue" HorizontalAlignment="Left" Height="36" Margin="683,634,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <Label Content="Resource Pack" HorizontalAlignment="Left" Height="36" Margin="407,675,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ResourcePackValue" HorizontalAlignment="Left" Height="36" Margin="683,675,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="SpawnAnimalsValue" Content="Spawn Animals" HorizontalAlignment="Left" Height="36" Margin="407,716,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="WhitelistValue" Content="Whitelist" HorizontalAlignment="Left" Height="36" Margin="407,757,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="R-Con Password" HorizontalAlignment="Left" Height="36" Margin="807,60,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="RConPasswordValue" HorizontalAlignment="Left" Height="36" Margin="1083,60,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="GenerateStructuresValue" Content="Generate Structures" HorizontalAlignment="Left" Height="36" Margin="807,101,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Max Build Height" HorizontalAlignment="Left" Height="36" Margin="807,142,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="MaxBuildHeightvalue" HorizontalAlignment="Left" Height="36" Margin="1083,142,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="OnlineModeValue" Content="Online Mode" HorizontalAlignment="Left" Height="36" Margin="807,183,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Level Seed" HorizontalAlignment="Left" Height="36" Margin="807,224,0,0" VerticalAlignment="Top" Width="265" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="LevelSeedValue" HorizontalAlignment="Left" Height="36" Margin="1083,224,0,0" VerticalAlignment="Top" Width="110" HorizontalContentAlignment="Right"/>
+        <CheckBox x:Name="PreventProxyConnectionsValue" Content="Prevent Proxy Connections" HorizontalAlignment="Left" Height="36" Margin="807,265,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="UseNativeTransportValue" Content="Use Native Transport" HorizontalAlignment="Left" Height="36" Margin="807,306,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <CheckBox x:Name="EnableRConValue" Content="Enable R-Con" HorizontalAlignment="Left" Height="36" Margin="807,347,0,0" VerticalAlignment="Top" Width="386" VerticalContentAlignment="Center" FontSize="24" Foreground="White"/>
+        <Label Content="Motd:" HorizontalAlignment="Left" Height="36" Margin="807,383,0,0" VerticalAlignment="Top" Width="70" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="MotdValue" HorizontalAlignment="Left" Height="246" Margin="807,424,0,0" VerticalAlignment="Top" Width="386" HorizontalContentAlignment="Left"/>
 
+        <Rectangle Height="1" Fill="White" Margin="807,675,7,124"/>
+        <Label x:Name="SettingDescription" Content="Description" HorizontalAlignment="Left" Height="114" Margin="806,676,0,0" VerticalAlignment="Top" Width="387" Foreground="White" FontSize="18"/>
 
     </Grid>
 </Window>

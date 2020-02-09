@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("searchicon.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("colorselect.cur")]
 
 

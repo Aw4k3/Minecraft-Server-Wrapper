@@ -70,5 +70,77 @@ namespace Minecraft_Server_Wrapper {
                 this["RunServerOnStartUp"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50, 50, 128")]
+        public global::System.Drawing.Color TitleBarColor {
+            get {
+                return ((global::System.Drawing.Color)(this["TitleBarColor"]));
+            }
+            set {
+                this["TitleBarColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        public global::System.Drawing.Color DefaultOutputColor {
+            get {
+                return ((global::System.Drawing.Color)(this["DefaultOutputColor"]));
+            }
+            set {
+                this["DefaultOutputColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Yellow")]
+        public global::System.Drawing.Color WarningOutputColor {
+            get {
+                return ((global::System.Drawing.Color)(this["WarningOutputColor"]));
+            }
+            set {
+                this["WarningOutputColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
+        public global::System.Drawing.Color ErrorOutputColor {
+            get {
+                return ((global::System.Drawing.Color)(this["ErrorOutputColor"]));
+            }
+            set {
+                this["ErrorOutputColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowWarningOutput {
+            get {
+                return ((bool)(this["ShowWarningOutput"]));
+            }
+            set {
+                this["ShowWarningOutput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowErrorOutput {
+            get {
+                return ((bool)(this["ShowErrorOutput"]));
+            }
+            set {
+                this["ShowErrorOutput"] = value;
+            }
+        }
     }
 }

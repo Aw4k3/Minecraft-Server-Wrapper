@@ -126,7 +126,7 @@
                             </Trigger>
                             <EventTrigger RoutedEvent="Checked">
                                 <BeginStoryboard>
-                                    <Storyboard>
+                                    <Storyboard x:Name="CheckBoxChecking">
                                         <ColorAnimation To="Lime" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
                                         <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
                                         <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
@@ -136,7 +136,7 @@
                             </EventTrigger>
                             <EventTrigger RoutedEvent="Unchecked">
                                 <BeginStoryboard>
-                                    <Storyboard>
+                                    <Storyboard x:Name="CheckBoxUnChecking">
                                         <ColorAnimation To="DarkRed" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
                                         <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
                                         <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
@@ -165,9 +165,9 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <DockPanel Height="20" VerticalAlignment="Top" Width="1200" Background="#FF323280" LastChildFill="False">
+        <DockPanel x:Name="TitleBar" Height="20" VerticalAlignment="Top" Width="1200" Background="#FF323280" LastChildFill="False">
             <Grid Height="20" Width="1200">
-                <Label Content="Server Properties Editor" Height="20" Foreground="White" FontSize="11" MouseDown="Window_MouseDown"/>
+                <Label Content="Server Properties Editor" Height="20" Foreground="White" FontSize="11" MouseDown="Window_MouseDown" Padding="5,4"/>
                 <Button x:Name="Exit" Content="X" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="1180,0,0,0" Click="Exit_Click"/>
                 <Button x:Name="Minimize" Content="-" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="1160,0,20,0" Click="Minimize_Click"/>
             </Grid>

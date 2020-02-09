@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minecraft_Server_Wrapper"
         mc:Ignorable="d"
-        Title="Minecraft Server Wrapper" Height="720" Width="1280" Foreground="White" Background="#FF101010" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontFamily="Bahnschrift Light" FontSize="18">
+        Title="Minecraft Server Wrapper" Height="720" Width="1280" Foreground="White" Background="#FF101010" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" FontFamily="Bahnschrift Light" FontSize="18">
     <Window.Resources>
         <Style TargetType="{x:Type TextBox}">
             <Style.Resources>
@@ -121,11 +121,16 @@
         </Style>
     </Window.Resources>
     <Grid MouseDown="Window_MouseDown">
-        <DockPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Center" Width="1280" Background="#FF323280" LastChildFill="False">
+        <DockPanel x:Name="TitleBar" Height="20" VerticalAlignment="Top" HorizontalAlignment="Center" Width="1280" Background="#FF323280" LastChildFill="False">
             <Grid Height="20" Width="1280">
                 <Label Content="Minecraft Server" Height="20" Foreground="White" FontSize="11" MouseDown="Window_MouseDown"/>
                 <Button x:Name="Exit" Content="X" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="1260,0,0,0" Click="Exit_Click"/>
                 <Button x:Name="Minimize" Content="-" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="1240,0,20,0" Click="Minimize_Click"/>
+                <Button x:Name="WrapperSettings" Height="20" Width="20" BorderBrush="{x:Null}" FontSize="11" Margin="1220,0,40,0" Click="WrapperSettings_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Gear.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
             </Grid>
         </DockPanel>
 

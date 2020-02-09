@@ -3,6 +3,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Linq;
+using System.Windows.Media.Animation;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -42,22 +44,14 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
-        public void LoadSettings()
-        {
-            for (int i = 0; i < ServerPropertiesValues.Length - 2; i++)
-            {
-                ServerPropertiesValues[i] = ServerPropertiesValues[i + 2];
-            }
-        }
-
         private void SettingSearch_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             SettingSearch.Clear();
         }
-
-        private void SettingSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        
+        Grid grid = new Grid();
+        private void SettingSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Grid grid = new Grid();
             string searchQuery = Regex.Replace(SettingSearch.Text.ToLower(), @"\s+", "");
             if (SettingSearch.Text == null)
             {
@@ -84,12 +78,22 @@ namespace Minecraft_Server_Wrapper
 
             if (searchQuery != null)
             {
+                try
+                {
+                    SettingDescription.Content = searchQuery;
+                }
+                catch (Exception)
+                {
+                }
+
                 foreach (Label label in grid.Children)
                 {
+                    SettingDescription.Content = label.Content;
                     string i = Regex.Replace(label.Content.ToString().ToLower(), @"\s+", "");
                     if (!i.Contains(searchQuery))
                     {
                         label.Opacity = 0.5;
+                        SettingDescription.Content = label.Opacity.ToString();
                     }
                 }
                 foreach (CheckBox checkbox in grid.Children)
@@ -117,6 +121,70 @@ namespace Minecraft_Server_Wrapper
                     }
                 }
             }
+        }
+
+        public void LoadSettings()
+        {
+            //Remove Comment Lines obtained while collecting values from server.properties
+            for (int i = 0; i < ServerPropertiesValues.Length - 2; i++)
+            {
+                ServerPropertiesValues[i] = ServerPropertiesValues[i + 2];
+            }
+
+            //Showing Values
+            UIElementCollection uIElementCollection = new UIElementCollection(this, grid);
+
+            foreach (Label label in uIElementCollection)
+            {
+                uIElementCollection.Remove(label);
+            }
+
+            SpawnProtectionValue.Text = GetStrVal("spawn-protection");
+            MaxTickTimeValue.Text = GetStrVal("max-tick-time");
+            QueryPortValue.Text = GetStrVal("query.port");
+            GeneratingSettingsValue.Text = GetStrVal("generator-settings");
+            //ForceGamemodeValue.IsChecked = GetBoolVal("force-gamemode", ForceGamemodeValue);
+            if (GetBoolVal("force-gamemode", ForceGamemodeValue))
+            {
+                ForceGamemodeValue.BeginStoryboard((Storyboard)ForceGamemodeValue.FindResource("CheckBoxChecking"));
+                ForceGamemodeValue.IsChecked = true;
+            }
+
+        }
+
+        private string GetStrVal(string ValToFind)
+        {
+            string result = "";
+
+            foreach (var item in ServerPropertiesValues)
+            {
+                if (item.Contains(ValToFind))
+                {
+                    result = item.Split(Convert.ToChar("=")).Last();
+                }
+            }
+
+            return result;
+        }
+
+        private bool GetBoolVal(string ValToFind, CheckBox CheckBox)
+        {
+            bool result = false;
+
+            foreach (var item in ServerPropertiesValues)
+            {
+                if (item.Contains(ValToFind))
+                {
+                    result = Convert.ToBoolean(item.Split(Convert.ToChar("=")).Last());
+                }
+            }
+            /*
+            if (result)
+            {
+                CheckBox.BeginStoryboard(grid.FindResource("CheckBoxChecking") as Storyboard);
+            }
+            */
+            return result;
         }
     }
 }

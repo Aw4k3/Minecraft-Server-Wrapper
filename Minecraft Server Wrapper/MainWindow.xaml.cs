@@ -7,7 +7,6 @@ using WinForms = System.Windows.Forms;
 using System.IO;
 using System.Windows.Media;
 using System.Timers;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace Minecraft_Server_Wrapper
@@ -19,14 +18,27 @@ namespace Minecraft_Server_Wrapper
     {
         ServerWrapper serverWrapper = new ServerWrapper();
         ServerPropertiesManager serverPropertiesManager = new ServerPropertiesManager();
+        WrapperSettings wrapperSettings = new WrapperSettings();
+
+        Color DefaultOutputColor;
+        Color WarningOutputColor;
+        Color ErrorOutputColor;
 
         public MainWindow()
         {
             InitializeComponent();
+
             ramLimit.Text = serverWrapper.ServerRAM.ToString();
             ServerFilePath.Text = serverWrapper.ServerPath;
             ForceOnlineMode.IsChecked = serverWrapper.ServerForceOnlineMode;
             RunServerOnStartUp.IsChecked = serverWrapper.RunServerOnStartUp;
+
+            TitleBar.Background = new SolidColorBrush(Color.FromRgb(serverWrapper.TitleBarColor.R, serverWrapper.TitleBarColor.G, serverWrapper.TitleBarColor.B));
+            serverPropertiesManager.TitleBar.Background = new SolidColorBrush(Color.FromRgb(serverWrapper.TitleBarColor.R, serverWrapper.TitleBarColor.G, serverWrapper.TitleBarColor.B));
+            wrapperSettings.TitleBar.Background = new SolidColorBrush(Color.FromRgb(serverWrapper.TitleBarColor.R, serverWrapper.TitleBarColor.G, serverWrapper.TitleBarColor.B));
+            DefaultOutputColor = Color.FromRgb(serverWrapper.DefaultOutputColor.R, serverWrapper.DefaultOutputColor.G, serverWrapper.DefaultOutputColor.B);
+            WarningOutputColor = Color.FromRgb(serverWrapper.WarningOutputColor.R, serverWrapper.WarningOutputColor.G, serverWrapper.WarningOutputColor.B);
+            ErrorOutputColor = Color.FromRgb(serverWrapper.ErrorOutputColor.R, serverWrapper.ErrorOutputColor.G, serverWrapper.ErrorOutputColor.B);
 
             if (File.Exists(ServerFilePath.Text))
             {
@@ -74,6 +86,11 @@ namespace Minecraft_Server_Wrapper
             {
 
             }
+        }
+
+        private void WrapperSettings_Click(object sender, RoutedEventArgs e)
+        {
+            new WrapperSettings().Show();
         }
 
         private void StatusLightColor(int x)
@@ -393,8 +410,6 @@ namespace Minecraft_Server_Wrapper
             ServerArgs.CreateNoWindow = true;
 
             serverWrapper.ServerForceOnlineMode = true;
-
-
         }
 
         private void ForceOnlineMode_Unchecked(object sender, RoutedEventArgs e)
@@ -512,7 +527,23 @@ namespace Minecraft_Server_Wrapper
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                ServerOutputWindow.AppendText(e.Data + "\n");
+                if (e.Data.Contains("WARN"))
+                {
+                    ServerOutputWindow.Foreground = new SolidColorBrush(WarningOutputColor);
+                    ServerOutputWindow.AppendText(e.Data + "\n");
+                    ServerOutputWindow.Foreground = new SolidColorBrush(DefaultOutputColor);
+                }
+                else if (e.Data.Contains("ERROR"))
+                {
+                    ServerOutputWindow.Foreground = new SolidColorBrush(ErrorOutputColor);
+                    ServerOutputWindow.AppendText(e.Data + "\n");
+                    ServerOutputWindow.Foreground = new SolidColorBrush(DefaultOutputColor);
+                }
+                else
+                {
+                    ServerOutputWindow.AppendText(e.Data + "\n");
+                }
+                
                 ServerOutputWindow.ScrollToEnd();
             }));
         }

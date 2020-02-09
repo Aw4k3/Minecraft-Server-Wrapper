@@ -19,3 +19,7 @@ C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrappe
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.application
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerPropertiesManager.g.cs
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerPropertiesManager.baml
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ColorPicker.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\WrapperSettings.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ColorPicker.baml
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\WrapperSettings.baml

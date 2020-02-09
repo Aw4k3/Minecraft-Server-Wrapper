@@ -62,17 +62,22 @@
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ServerNotRunningIcon</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -93,14 +98,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ColorConverter.cs" />
+    <Compile Include="ColorPicker.xaml.cs">
+      <DependentUpon>ColorPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ServerPropertiesManager.xaml.cs">
       <DependentUpon>ServerPropertiesManager.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ServerWrapper.cs" />
     <Compile Include="ServerWrapper.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ServerWrapper.settings</DependentUpon>
     </Compile>
+    <Compile Include="WrapperSettings.xaml.cs">
+      <DependentUpon>WrapperSettings.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ColorPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -114,6 +131,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ServerPropertiesManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WrapperSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -164,6 +185,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="SearchIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ServerNotRunningIcon" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ServerRunningIcon" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ColorSelect.cur" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

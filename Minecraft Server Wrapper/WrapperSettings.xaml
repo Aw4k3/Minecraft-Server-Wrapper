@@ -7,6 +7,23 @@
         mc:Ignorable="d"
         Title="WrapperSettings" Height="400" Width="450" Foreground="White" Background="#FF101010" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" FontFamily="Bahnschrift Light" FontSize="18">
     <Window.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="SkinButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="12.5"/>
+                    <Setter Property="Padding" Value="5,2"/>
+                </Style>
+            </Style.Resources>
+        </Style>
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -57,14 +74,18 @@
             </Grid>
         </DockPanel>
         <Label Content="Title Bar Color" HorizontalAlignment="Left" Height="37" Margin="10,25,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
-        <Rectangle x:Name="TitleBarColor" Fill="#FF323280" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,28,10,341" Height="30" MouseUp="TitleBarColor_MouseUp"/>
-        <CheckBox x:Name="ShowWarningOutput" Content="Warning Output" HorizontalAlignment="Left" Height="37" Margin="10,67,0,0" VerticalAlignment="Top" Width="430" Foreground="White" FontSize="24" Checked="ShowWarningOutput_Checked" Unchecked="ShowWarningOutput_Unchecked"/>
-        <CheckBox x:Name="ShowErrorOutput" Content="Error Output" HorizontalAlignment="Left" Height="37" Margin="10,109,0,0" VerticalAlignment="Top" Width="430" Foreground="White" FontSize="24" Checked="ShowErrorOutput_Checked" Unchecked="ShowErrorOutput_Unchecked"/>
+        <Rectangle x:Name="TitleBarColor" Fill="#FF323280" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,28,10,341" Height="30" MouseUp="TitleBarColor_MouseUp" Cursor="Hand"/>
+        <CheckBox x:Name="ShowWarningOutput" Content="Warning Output" HorizontalAlignment="Left" Height="37" Margin="10,67,0,0" VerticalAlignment="Top" Width="430" Foreground="White" FontSize="24" Checked="ShowWarningOutput_Checked" Unchecked="ShowWarningOutput_Unchecked" IsChecked="True"/>
+        <CheckBox x:Name="ShowErrorOutput" Content="Error Output" HorizontalAlignment="Left" Height="37" Margin="10,109,0,0" VerticalAlignment="Top" Width="430" Foreground="White" FontSize="24" Checked="ShowErrorOutput_Checked" Unchecked="ShowErrorOutput_Unchecked" IsChecked="True"/>
         <Label Content="Default Output Color" HorizontalAlignment="Left" Height="37" Margin="10,151,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
-        <Rectangle x:Name="DefaultOutputColor" Fill="White" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,154,10,215" Height="30" MouseUp="DefaultOutputColor_MouseUp"/>
-        <Label Content="Warning Output Color" HorizontalAlignment="Left" Height="37" Margin="10,193,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
-        <Rectangle x:Name="WarningOutputColor" Fill="Yellow" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,197,10,173" Height="30" MouseUp="WarningOutputColor_MouseUp"/>
-        <Label Content="Error Output Color" HorizontalAlignment="Left" Height="37" Margin="10,235,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
-        <Rectangle x:Name="ErrorOutputColor" Fill="Red" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,238,10,132" Height="30" MouseUp="ErrorOutputColor_MouseUp"/>
+        <Rectangle x:Name="DefaultOutputColor" Fill="White" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,154,10,215" Height="30" MouseUp="DefaultOutputColor_MouseUp" Cursor="Hand"/>
+        <Label x:Name="WarningOutputColorLabel" Content="Warning Output Color" HorizontalAlignment="Left" Height="37" Margin="10,193,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Rectangle x:Name="WarningOutputColor" Fill="Yellow" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,197,10,173" Height="30" MouseUp="WarningOutputColor_MouseUp" Cursor="Hand"/>
+        <Label x:Name="ErrorOutputColorLabel" Content="Error Output Color" HorizontalAlignment="Left" Height="37" Margin="10,235,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Rectangle x:Name="ErrorOutputColor" Fill="Red" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,238,10,132" Height="30" MouseUp="ErrorOutputColor_MouseUp" Cursor="Hand"/>
+        <Label Content="Foreground Opacity (%)" HorizontalAlignment="Left" Height="37" Margin="10,277,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ForegroundOpacityValue" HorizontalAlignment="Left" Height="25" Margin="374,282,0,0" Text="95" VerticalAlignment="Top" Width="66" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" TextChanged="ForegroundOpacityValue_TextChanged"/>
+        <Label Content="Background Skin" HorizontalAlignment="Left" Height="37" Margin="10,319,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Button x:Name="ChangeBackgroundSkin" Content="No Skin" HorizontalAlignment="Left" Height="37" Margin="300,319,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF0080FF" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Right" Style="{StaticResource SkinButton}" Click="ChangeBackgroundSkin_Click" Cursor="Hand" ToolTip="Shift Click to clear"/>
     </Grid>
 </Window>

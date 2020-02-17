@@ -1,7 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using WinForms = System.Windows.Forms;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -10,15 +14,47 @@ namespace Minecraft_Server_Wrapper
     /// </summary>
     public partial class WrapperSettings : Window
     {
-        ServerWrapper ServerWrapper = new ServerWrapper();
-        ColorPicker ColorPicker = new ColorPicker();
+
+        ServerWrapper serverWrapper = new ServerWrapper();
+        ColorPicker colorPicker = new ColorPicker();
 
         public WrapperSettings()
         {
             InitializeComponent();
-            TitleBarColor.Fill = new SolidColorBrush(Color.FromRgb(ServerWrapper.TitleBarColor.R, ServerWrapper.TitleBarColor.G, ServerWrapper.TitleBarColor.B));
-            WarningOutputColor.Fill = new SolidColorBrush(Color.FromRgb(ServerWrapper.WarningOutputColor.R, ServerWrapper.WarningOutputColor.G, ServerWrapper.WarningOutputColor.B));
-            ErrorOutputColor.Fill = new SolidColorBrush(Color.FromRgb(ServerWrapper.ErrorOutputColor.R, ServerWrapper.ErrorOutputColor.G, ServerWrapper.ErrorOutputColor.B));
+            TitleBarColor.Fill = new SolidColorBrush(Color.FromRgb(serverWrapper.TitleBarColor.R, serverWrapper.TitleBarColor.G, serverWrapper.TitleBarColor.B));
+            WarningOutputColor.Fill = new SolidColorBrush(Color.FromRgb(serverWrapper.WarningOutputColor.R, serverWrapper.WarningOutputColor.G, serverWrapper.WarningOutputColor.B));
+            ErrorOutputColor.Fill = new SolidColorBrush(Color.FromRgb(serverWrapper.ErrorOutputColor.R, serverWrapper.ErrorOutputColor.G, serverWrapper.ErrorOutputColor.B));
+            if (!serverWrapper.ShowWarningOutput)
+            {
+                WarningOutputColor.Opacity = 0.1;
+                WarningOutputColorLabel.Opacity = 0.1;
+                WarningOutputColor.IsEnabled = false;
+                serverWrapper.ShowWarningOutput = false;
+            }
+            if (!serverWrapper.ShowErrorOutput)
+            {
+                ErrorOutputColor.Opacity = 0.1;
+                ErrorOutputColorLabel.Opacity = 0.1;
+                ErrorOutputColor.IsEnabled = false;
+                serverWrapper.ShowErrorOutput = false;
+            }
+            try
+            {
+                ShowWarningOutput.IsChecked = serverWrapper.ShowWarningOutput;
+                ShowErrorOutput.IsChecked = serverWrapper.ShowErrorOutput;
+            }
+            catch (Exception)
+            {
+            }
+
+            if (File.Exists(serverWrapper.BackgroundSkin))
+            {
+                ChangeBackgroundSkin.Content = Path.GetFileName(serverWrapper.BackgroundSkin);
+            }
+            else
+            {
+                ChangeBackgroundSkin.Content = "No Skin";
+            }
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -45,70 +81,141 @@ namespace Minecraft_Server_Wrapper
 
         private void TitleBarColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (ColorPicker.DialogResult == true)
+            if (colorPicker.ShowDialog() == true)
             {
-                TitleBarColor.Fill = new SolidColorBrush(ColorPicker.FinalRGBResult);
-                ServerWrapper.TitleBarColor = System.Drawing.Color.FromArgb(1, ColorPicker.FinalRGBResult.R, ColorPicker.FinalRGBResult.G, ColorPicker.FinalRGBResult.B);
-                ServerWrapper.Save();
+                TitleBarColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
+                serverWrapper.TitleBarColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                serverWrapper.Save();
             }
         }
 
         private void DefaultOutputColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (ColorPicker.DialogResult == true)
+            if (colorPicker.ShowDialog() == true)
             {
-                DefaultOutputColor.Fill = new SolidColorBrush(ColorPicker.FinalRGBResult);
-                ServerWrapper.DefaultOutputColor = System.Drawing.Color.FromArgb(1, ColorPicker.FinalRGBResult.R, ColorPicker.FinalRGBResult.G, ColorPicker.FinalRGBResult.B);
-                ServerWrapper.Save();
+                DefaultOutputColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
+                serverWrapper.DefaultOutputColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                serverWrapper.Save();
             }
         }
 
         private void WarningOutputColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (ColorPicker.DialogResult == true)
+            if (colorPicker.ShowDialog() == true)
             {
-                WarningOutputColor.Fill = new SolidColorBrush(ColorPicker.FinalRGBResult);
-                ServerWrapper.WarningOutputColor = System.Drawing.Color.FromArgb(1, ColorPicker.FinalRGBResult.R, ColorPicker.FinalRGBResult.G, ColorPicker.FinalRGBResult.B);
-                ServerWrapper.Save();
+                WarningOutputColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
+                serverWrapper.WarningOutputColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                serverWrapper.Save();
             }
         }
 
         private void ErrorOutputColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (ColorPicker.DialogResult == true)
+            if (colorPicker.ShowDialog() == true)
             {
-                ErrorOutputColor.Fill = new SolidColorBrush(ColorPicker.FinalRGBResult);
-                ServerWrapper.ErrorOutputColor = System.Drawing.Color.FromArgb(1, ColorPicker.FinalRGBResult.R, ColorPicker.FinalRGBResult.G, ColorPicker.FinalRGBResult.B);
-                ServerWrapper.Save();
+                ErrorOutputColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
+                serverWrapper.ErrorOutputColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                serverWrapper.Save();
             }
         }
 
         private void ShowWarningOutput_Checked(object sender, RoutedEventArgs e)
         {
-            WarningOutputColor.IsEnabled = true;
-            ServerWrapper.ShowWarningOutput = true;
-            ServerWrapper.Save();
+            try
+            {
+                WarningOutputColor.Opacity = 1;
+                WarningOutputColorLabel.Opacity = 1;
+                WarningOutputColor.IsEnabled = true;
+                serverWrapper.ShowWarningOutput = true;
+                serverWrapper.Save();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void ShowWarningOutput_Unchecked(object sender, RoutedEventArgs e)
         {
+            WarningOutputColor.Opacity = 0.1;
+            WarningOutputColorLabel.Opacity = 0.1;
             WarningOutputColor.IsEnabled = false;
-            ServerWrapper.ShowWarningOutput = false;
-            ServerWrapper.Save();
+            serverWrapper.ShowWarningOutput = false;
+            serverWrapper.Save();
         }
 
         private void ShowErrorOutput_Checked(object sender, RoutedEventArgs e)
         {
-            ErrorOutputColor.IsEnabled = true;
-            ServerWrapper.ShowErrorOutput = true;
-            ServerWrapper.Save();
+            try
+            {
+                ErrorOutputColor.Opacity = 1;
+                ErrorOutputColorLabel.Opacity = 1;
+                ErrorOutputColor.IsEnabled = true;
+                serverWrapper.ShowErrorOutput = true;
+                serverWrapper.Save();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void ShowErrorOutput_Unchecked(object sender, RoutedEventArgs e)
         {
+            ErrorOutputColor.Opacity = 0.1;
+            ErrorOutputColorLabel.Opacity = 0.1;
             ErrorOutputColor.IsEnabled = false;
-            ServerWrapper.ShowErrorOutput = false;
-            ServerWrapper.Save();
+            serverWrapper.ShowErrorOutput = false;
+            serverWrapper.Save();
+        }
+
+        private static readonly Regex _regex = new Regex("[^0-9]"); //regex that matches disallowed text
+
+        private static bool IsTextAllowed(string text)
+        {
+            return !_regex.IsMatch(text);
+        }
+
+        private void ForegroundOpacityValue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (IsTextAllowed(ForegroundOpacityValue.Text) && Convert.ToInt32(ForegroundOpacityValue.Text) >= 0 && Convert.ToInt32(ForegroundOpacityValue.Text) <= 100)
+            {
+                if (Convert.ToInt32(ForegroundOpacityValue.Text) != 0)
+                {
+                    //new MainWindow().ServerOutputWindow.Opacity = Convert.ToInt32(ForegroundOpacityValue.Text) / 100;
+                    serverWrapper.ForegroundOpacity = Convert.ToInt32(ForegroundOpacityValue.Text) / 100;
+                }
+                if (Convert.ToInt32(ForegroundOpacityValue.Text) == 0)
+                {
+                    //new MainWindow().ServerOutputWindow.Opacity = 0;
+                    serverWrapper.ForegroundOpacity = 0;
+                }
+            }
+
+            if (!IsTextAllowed(ForegroundOpacityValue.Text))
+            {
+                ForegroundOpacityValue.Text = Regex.Replace(ForegroundOpacityValue.Text, "[^0-9]", "");
+            }
+        }
+
+        private void ChangeBackgroundSkin_Click(object sender, RoutedEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.Shift)
+            {
+                serverWrapper.BackgroundSkin = "";
+                serverWrapper.Save();
+                ChangeBackgroundSkin.Content = "No Skin";
+            }
+            else
+            {
+                WinForms.OpenFileDialog BackgroundSkinFile = new WinForms.OpenFileDialog();
+                BackgroundSkinFile.Filter = "Image or Video (.png .jpg .jpeg .bmp .mp4)|*.png;*.jpg;*.jpeg;*.bmp;*.mp4";
+
+                if (BackgroundSkinFile.ShowDialog() == WinForms.DialogResult.OK)
+                {
+                    serverWrapper.BackgroundSkin = BackgroundSkinFile.FileName;
+                    serverWrapper.Save();
+                    ChangeBackgroundSkin.Content = Path.GetFileName(BackgroundSkinFile.FileName);
+                }
+            }
         }
     }
 }

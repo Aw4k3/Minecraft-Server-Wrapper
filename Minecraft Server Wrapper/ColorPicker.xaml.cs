@@ -83,7 +83,7 @@ namespace Minecraft_Server_Wrapper
             DialogResult = true;
         }
 
-        private void PreviousColor_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void PreviousColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
             CurrentColor.Background = PreviousColor.Background;
         }

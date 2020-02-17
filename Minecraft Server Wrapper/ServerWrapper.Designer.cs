@@ -142,5 +142,29 @@ namespace Minecraft_Server_Wrapper {
                 this["ShowErrorOutput"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float ForegroundOpacity {
+            get {
+                return ((float)(this["ForegroundOpacity"]));
+            }
+            set {
+                this["ForegroundOpacity"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BackgroundSkin {
+            get {
+                return ((string)(this["BackgroundSkin"]));
+            }
+            set {
+                this["BackgroundSkin"] = value;
+            }
+        }
     }
 }

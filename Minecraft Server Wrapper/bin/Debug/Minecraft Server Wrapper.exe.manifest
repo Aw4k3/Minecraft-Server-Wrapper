@@ -43,24 +43,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Minecraft Server Wrapper.exe" size="225272">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Minecraft Server Wrapper.exe" size="234488">
       <assemblyIdentity name="Minecraft Server Wrapper" version="1.1.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ddXIeTIR9+W+uIo8OsrmPhtVImfW0Wy92Afm9jzHU0M=</dsig:DigestValue>
+        <dsig:DigestValue>/mSQznfyrx9JMxkYqdoxpemX/Gik4CvvkIUiyeynG0k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Minecraft Server Wrapper.exe.config" size="1897">
+  <file name="Minecraft Server Wrapper.exe.config" size="2101">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>dCD7VYYBPCDizHtJsvL8rxY4r/qJ/9qEX/VgRaNn0Po=</dsig:DigestValue>
+      <dsig:DigestValue>8yc59WkpS1pbtIGqvD5Jg4gkgB+76ldlLIyViJVFlfk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="ServerNotRunningIcon" size="110598">

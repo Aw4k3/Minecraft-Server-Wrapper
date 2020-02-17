@@ -8,6 +8,8 @@ using System.IO;
 using System.Windows.Media;
 using System.Timers;
 using System.Windows.Threading;
+using System.Windows.Media.Imaging;
+using System.Windows.Controls;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -40,10 +42,10 @@ namespace Minecraft_Server_Wrapper
             WarningOutputColor = Color.FromRgb(serverWrapper.WarningOutputColor.R, serverWrapper.WarningOutputColor.G, serverWrapper.WarningOutputColor.B);
             ErrorOutputColor = Color.FromRgb(serverWrapper.ErrorOutputColor.R, serverWrapper.ErrorOutputColor.G, serverWrapper.ErrorOutputColor.B);
 
+            //Does server path exist and is auto start available
             if (File.Exists(ServerFilePath.Text))
             {
-                ShowInExplorer.IsEnabled = true;
-                StartStopServer.IsEnabled = true;
+                ServerCheck("ServerPath");
                 StatusLightColor(1);
             }
             if (ServerFilePath.Text == "...\\server.jar")
@@ -61,6 +63,35 @@ namespace Minecraft_Server_Wrapper
             if (File.Exists(ServerFilePath.Text) && RunServerOnStartUp.IsChecked == true)
             {
                 OnServerStart();
+            }
+
+            //Skinning
+            if (File.Exists(serverWrapper.BackgroundSkin))
+            {
+                //GridWindow.Background = new ImageBrush(new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\skin.png")));
+                
+                switch (Path.GetExtension(serverWrapper.BackgroundSkin))
+                {
+                    case ".png":
+                        GridWindow.Background = new ImageBrush(new BitmapImage(new Uri(serverWrapper.BackgroundSkin)));
+                        break;
+
+                    case ".jpg":
+                        GridWindow.Background = new ImageBrush(new BitmapImage(new Uri(serverWrapper.BackgroundSkin)));
+                        break;
+
+                    case ".jpeg":
+                        GridWindow.Background = new ImageBrush(new BitmapImage(new Uri(serverWrapper.BackgroundSkin)));
+                        break;
+
+                    case ".bmp":
+                        GridWindow.Background = new ImageBrush(new BitmapImage(new Uri(serverWrapper.BackgroundSkin)));
+                        break;
+
+                    case ".mp4":
+
+                        break;
+                }
             }
         }
 
@@ -153,6 +184,7 @@ namespace Minecraft_Server_Wrapper
                         StatusIndicator.Content = "Server path changed";
                         ShowInExplorer.IsEnabled = true;
                         BackupWorld.IsEnabled = true;
+
                         if (File.Exists(WorkingDirectory + @"\server.properties"))
                         {
                             EditServerProperties.IsEnabled = true;
@@ -161,6 +193,28 @@ namespace Minecraft_Server_Wrapper
                         }
                         serverWrapper.ServerPath = ServerFilePath.Text;
                         serverWrapper.Save();
+
+                        ModPluginWindow.Items.Clear();
+
+                        if (Directory.Exists(WorkingDirectory + @"\plugins"))
+                        {
+                            ModPluginsTabItem.Header = "Plugins";
+                            string[] _Plugins = Directory.GetFiles(WorkingDirectory + @"\plugins");
+                            foreach (var item in _Plugins)
+                            {
+                                ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item));
+                            }
+                        }
+
+                        if (Directory.Exists(WorkingDirectory + @"\mods"))
+                        {
+                            ModPluginsTabItem.Header = "Mods";
+                            string[] _Mods = Directory.GetFiles(WorkingDirectory + @"\mods");
+                            foreach (var item in _Mods)
+                            {
+                                ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item));
+                            }
+                        }
                     }
                 }
                 else
@@ -233,6 +287,15 @@ namespace Minecraft_Server_Wrapper
             ServerCheck("ServerPath");
         }
 
+        private void ServerFilePath_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Mouse.MiddleButton == MouseButtonState.Pressed)
+            {
+                ServerFilePath.Clear();
+                ServerCheck("ServerPath");
+            }
+        }
+
         //Managing Server Memory
         private void ramLimit_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
@@ -242,9 +305,20 @@ namespace Minecraft_Server_Wrapper
         private void ramLimit_MouseWheel(object sender, MouseWheelEventArgs e)
         {
 
-            if (Convert.ToInt32(ramLimit.Text) + (e.Delta / 10 - 2) >= 0)
+            if (e.Delta > 0)
             {
-                ramLimit.Text = (Convert.ToInt32(ramLimit.Text) + (e.Delta / 10 - 2)).ToString();
+                if (Keyboard.Modifiers == ModifierKeys.Control)
+                {
+                    ramLimit.Text = (Convert.ToInt32(ramLimit.Text) + 1).ToString();
+                }
+                else if (Keyboard.Modifiers == ModifierKeys.Shift)
+                {
+                    ramLimit.Text = (Convert.ToInt32(ramLimit.Text) + 1024).ToString();
+                }
+                else
+                {
+                    ramLimit.Text = (Convert.ToInt32(ramLimit.Text) + 128).ToString();
+                }
             }
             else
             {
@@ -388,6 +462,12 @@ namespace Minecraft_Server_Wrapper
             }));
         }
 
+        //Clear Server Output
+        private void ClearOutputWindow_Click(object sender, RoutedEventArgs e)
+        {
+            ServerOutputWindow.Document.Blocks.Clear();
+        }
+
         //Editing Server Properties File
         private void EditServerProperties_Click(object sender, RoutedEventArgs e)
         {
@@ -426,19 +506,28 @@ namespace Minecraft_Server_Wrapper
         }
 
         //RAM and CPU usage
-        private void UpdateCpuRamUsageTimer()
+        private void UpdateCpuRamUsageTimer(bool StartTimer)
         {
             Timer timer = new Timer();
-            while (ServerIsRunning == true)
+            timer.Interval = 100;
+            timer.AutoReset = true;
+            timer.Elapsed += new ElapsedEventHandler(UpdateCpuRamUsage_ElapsedEventHandler);
+            if (StartTimer)
             {
-                timer.Interval = 100;
-                timer.Elapsed += new ElapsedEventHandler(UpdateCpuRamUsage_ElapsedEventHandler);
+                timer.Start();
+            }
+            if (!StartTimer)
+            {
+                timer.Stop();
             }
         }
 
         private void UpdateCpuRamUsage_ElapsedEventHandler(object sender, EventArgs e)
         {
-            ramUsageValue.Content = ServerProcess.WorkingSet64 / 1024 / 1024;
+            Dispatcher.Invoke(() =>
+            {
+                ramUsageValue.Content = "RAM Usage: " + ServerProcess.WorkingSet64 / 1024 / 1024 + "MB";
+            });
         }
 
         //If application is exited while server is running
@@ -478,6 +567,7 @@ namespace Minecraft_Server_Wrapper
             
             BrowseServerFile.IsEnabled = false;
             KickAll.IsEnabled = true;
+            BanAll.IsEnabled = true;
             opAll.IsEnabled = true;
             deopAll.IsEnabled = true;
             SendCommand.IsEnabled = true;
@@ -486,16 +576,22 @@ namespace Minecraft_Server_Wrapper
 
             StatusIndicator.Content = "Server is Running | Server Process ID: " + ServerProcess.Id;
             StatusLightColor(2);
+
+            UpdateCpuRamUsageTimer(true);
         }
 
         private void OnServerStop()
         {
+            UpdateCpuRamUsageTimer(false);
+            ServerProcess.CancelOutputRead();
             BrowseServerFile.IsEnabled = true;
             KickAll.IsEnabled = false;
+            BanAll.IsEnabled = false;
             opAll.IsEnabled = false;
             deopAll.IsEnabled = false;
             SendCommand.IsEnabled = false;
 
+            ServerOutputWindow.AppendText("\nServer Closed");
             ServerIsRunning = false;
             StartStopServer.Content = "Start Server";
         }
@@ -515,9 +611,6 @@ namespace Minecraft_Server_Wrapper
                 ServerProcess.Kill();
 
                 OnServerStop();
-
-                ServerOutputWindow.AppendText("\nServer Closed");
-
                 StatusIndicator.Content = "Server Closed";
                 StatusLightColor(1);
             }
@@ -527,21 +620,27 @@ namespace Minecraft_Server_Wrapper
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                if (e.Data.Contains("WARN"))
+                try
                 {
-                    ServerOutputWindow.Foreground = new SolidColorBrush(WarningOutputColor);
-                    ServerOutputWindow.AppendText(e.Data + "\n");
-                    ServerOutputWindow.Foreground = new SolidColorBrush(DefaultOutputColor);
+                    if (e.Data.Contains("WARN"))
+                    {
+                        ServerOutputWindow.AppendText(e.Data + "\n");
+                        ServerOutputWindow.Foreground = new SolidColorBrush(WarningOutputColor);
+                    }
+                    else if (e.Data.Contains("ERROR"))
+                    {
+                        ServerOutputWindow.AppendText(e.Data + "\n");
+                        ServerOutputWindow.Foreground = new SolidColorBrush(ErrorOutputColor);
+                    }
+                    else
+                    {
+                        ServerOutputWindow.AppendText(e.Data + "\n");
+                        ServerOutputWindow.Foreground = new SolidColorBrush(DefaultOutputColor);
+                    }
                 }
-                else if (e.Data.Contains("ERROR"))
+                catch (Exception)
                 {
-                    ServerOutputWindow.Foreground = new SolidColorBrush(ErrorOutputColor);
-                    ServerOutputWindow.AppendText(e.Data + "\n");
-                    ServerOutputWindow.Foreground = new SolidColorBrush(DefaultOutputColor);
-                }
-                else
-                {
-                    ServerOutputWindow.AppendText(e.Data + "\n");
+
                 }
                 
                 ServerOutputWindow.ScrollToEnd();
@@ -554,7 +653,7 @@ namespace Minecraft_Server_Wrapper
             {
                 if (ServerProcess.HasExited && !StartStopServer.IsPressed)
                 {
-
+                    UpdateCpuRamUsageTimer(false);
                     ServerProcess.CancelOutputRead();
                     ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
                     ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
@@ -585,20 +684,40 @@ namespace Minecraft_Server_Wrapper
 
         private void SendCommand_Click(object sender, RoutedEventArgs e)
         {
-            ServerProcess.StandardInput.WriteLine(CommandBox.Text);
+            string[] CommandsToSend;
+            CommandsToSend = CommandBox.Text.Split(Convert.ToChar(";"));
+            foreach (var item in CommandsToSend)
+            {
+                ServerProcess.StandardInput.WriteLine(item.Trim());
+            }
+            CommandBox.Clear();
             //UpdateCommandHistory();
+        }
+
+        private void CommandBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                CommandBox.Clear();
+            }
         }
 
         private void CommandBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Tab)
             {
-                ServerProcess.StandardInput.Write(CommandBox.Text + Key.Tab);
+                //ServerProcess.StandardInput.Write(CommandBox.Text + Key.Tab);
             }
 
             if (e.Key == Key.Enter && ServerIsRunning)
             {
-                ServerProcess.StandardInput.WriteLine(CommandBox.Text);
+                string[] CommandsToSend;
+                CommandsToSend = CommandBox.Text.Split(Convert.ToChar(";"));
+                foreach (var item in CommandsToSend)
+                {
+                    ServerProcess.StandardInput.WriteLine(item.Trim());
+                }
+                CommandBox.Clear();
                 //UpdateCommandHistory();
             }
 
@@ -613,6 +732,64 @@ namespace Minecraft_Server_Wrapper
                 CommandBox.Text = CommandHistory[CommandToGetIndex];
                 CommandToGetIndex++;*/
             }
+        }
+
+        private void QuickCommand(object sender, RoutedEventArgs e)
+        {
+            if (sender == KickAll)
+            {
+                ServerProcess.StandardInput.WriteLine("kick @a");
+            }
+            if (sender == BanAll)
+            {
+                ServerProcess.StandardInput.WriteLine("ban @a");
+            }
+            if (sender == opAll)
+            {
+                ServerProcess.StandardInput.WriteLine("op @a");
+            }
+            if (sender == deopAll)
+            {
+                ServerProcess.StandardInput.WriteLine("deop @a");
+            }
+        }
+
+        private void ServeroutputWindowScale_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            double scale = Convert.ToDouble(Regex.Replace(ServeroutputWindowScale.Text, "[^0-9]", ""));
+            if (scale >= 1)
+            {
+                ServerOutputWindow.FontSize = (scale / 100) * 12;
+            }
+
+        }
+
+        private void ServerOutputWindow_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            /*while (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                double scale = Convert.ToDouble(Regex.Replace(ServeroutputWindowScale.Text, "[^0-9]", ""));
+                if (e.Delta > 0)
+                {
+                    scale += 5;
+                    ServeroutputWindowScale.Text = scale + "%";
+                    ServerOutputWindow.FontSize = (scale / 100) * 12;
+                }
+                if (e.Delta < 0)
+                {
+                    scale -= 5;
+                    if (scale < 1)
+                    {
+                        scale = 1;
+                    }
+                    else
+                    {
+                        
+                    }
+                    ServerOutputWindow.FontSize = (scale / 100) * 12;
+                    ServeroutputWindowScale.Text = scale + "%";
+                }
+            }*/
         }
     }
 }

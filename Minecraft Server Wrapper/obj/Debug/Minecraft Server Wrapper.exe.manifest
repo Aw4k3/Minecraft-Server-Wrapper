@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Minecraft Server Wrapper.exe" size="234488">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Minecraft Server Wrapper.exe" size="240632">
       <assemblyIdentity name="Minecraft Server Wrapper" version="1.1.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>/mSQznfyrx9JMxkYqdoxpemX/Gik4CvvkIUiyeynG0k=</dsig:DigestValue>
+        <dsig:DigestValue>s6PfGYmy/pN5LgRiWT9jq5xM57oahIf51CsOLlCugiE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

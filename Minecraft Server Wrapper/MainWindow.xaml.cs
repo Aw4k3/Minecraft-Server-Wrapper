@@ -10,6 +10,7 @@ using System.Timers;
 using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
+using System.Threading.Tasks;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -60,12 +61,12 @@ namespace Minecraft_Server_Wrapper
                 StatusIndicator.Content = "Could not find server file at last known path";
                 StatusLightColor(0);
             }
-            if (File.Exists(ServerFilePath.Text) && RunServerOnStartUp.IsChecked == true)
+            if (File.Exists(ServerFilePath.Text) && serverWrapper.RunServerOnStartUp == true)
             {
                 OnServerStart();
             }
 
-            //Skinning
+            //Skinning [wip]
             if (File.Exists(serverWrapper.BackgroundSkin))
             {
                 //GridWindow.Background = new ImageBrush(new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\skin.png")));
@@ -320,9 +321,25 @@ namespace Minecraft_Server_Wrapper
                     ramLimit.Text = (Convert.ToInt32(ramLimit.Text) + 128).ToString();
                 }
             }
-            else
+            if (e.Delta < 0)
             {
-                ramLimit.Text = "0";
+                if (Keyboard.Modifiers == ModifierKeys.Control)
+                {
+                    ramLimit.Text = (Convert.ToInt32(ramLimit.Text) - 1).ToString();
+                }
+                else if (Keyboard.Modifiers == ModifierKeys.Shift)
+                {
+                    ramLimit.Text = (Convert.ToInt32(ramLimit.Text) - 1024).ToString();
+                }
+                else
+                {
+                    ramLimit.Text = (Convert.ToInt32(ramLimit.Text) - 128).ToString();
+                }
+
+                if (Convert.ToInt32(ramLimit.Text) < 0)
+                {
+                    ramLimit.Text = "0";
+                }
             }
         }
 
@@ -413,9 +430,10 @@ namespace Minecraft_Server_Wrapper
             BackupWorld.IsEnabled = true;
         }*/
         
-        private void BackupWorld_Click(object sender, RoutedEventArgs e)
+        private async void BackupWorld_Click(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(new Action(() => {
+            new Task(async () =>
+            {
                 BackupWorld.IsEnabled = false;
                 BackupWorld.Content = "Backing up Worlds";
 
@@ -459,7 +477,7 @@ namespace Minecraft_Server_Wrapper
 
                 BackupWorld.Content = "Backup Server World(s)";
                 BackupWorld.IsEnabled = true;
-            }));
+            });
         }
 
         //Clear Server Output
@@ -526,7 +544,7 @@ namespace Minecraft_Server_Wrapper
         {
             Dispatcher.Invoke(() =>
             {
-                ramUsageValue.Content = "RAM Usage: " + ServerProcess.WorkingSet64 / 1024 / 1024 + "MB";
+                ramUsageValue.Content = "RAM Usage: " + ServerProcess.WorkingSet64 / (1024 * 1024) + "MB";
             });
         }
 
@@ -566,6 +584,8 @@ namespace Minecraft_Server_Wrapper
             ServerIsRunning = true;
             
             BrowseServerFile.IsEnabled = false;
+            ServerFilePath.IsEnabled = false;
+            ramLimit.IsEnabled = false;
             KickAll.IsEnabled = true;
             BanAll.IsEnabled = true;
             opAll.IsEnabled = true;
@@ -585,6 +605,8 @@ namespace Minecraft_Server_Wrapper
             UpdateCpuRamUsageTimer(false);
             ServerProcess.CancelOutputRead();
             BrowseServerFile.IsEnabled = true;
+            ServerFilePath.IsEnabled = true;
+            ramLimit.IsEnabled = true;
             KickAll.IsEnabled = false;
             BanAll.IsEnabled = false;
             opAll.IsEnabled = false;
@@ -606,6 +628,7 @@ namespace Minecraft_Server_Wrapper
             else
             {
                 //Stop Server
+                UpdateCpuRamUsageTimer(false);
                 ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
                 ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
                 ServerProcess.Kill();

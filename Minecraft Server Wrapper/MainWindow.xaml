@@ -134,7 +134,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Border x:Name="TabItemContainer" Width="152" Height="30" Background="#F2282828" BorderBrush="#FF444444" BorderThickness="0,0,0,1" Margin="-2">
+                        <Border x:Name="TabItemContainer" Width="152" Height="30" Background="#F2202020" BorderBrush="#FF444444" BorderThickness="0,0,0,1" CornerRadius="8,8,0,0" Margin="-2">
                             <ContentPresenter x:Name="TabItemContentPresenter" ContentSource="Header" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -142,6 +142,107 @@
                                 <Setter TargetName="TabItemContainer" Property="BorderBrush" Value="#6eb2ff"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="VerticalScrollThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="ScrollThumb" Width="4" Height="Auto" Background="#F2181818" CornerRadius="2" HorizontalAlignment="Right" Margin="0,2"/>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="00:00:00.100" To="#F2404040" Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation Duration="00:00:00.100" To="10"  Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Width)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="00:00:00.100" To="#F2181818" Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation Duration="00:00:00.100" To="4"  Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Width)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="HorizontalScrollThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="ScrollThumb" Width="Auto" Height="4" Background="#F2181818" CornerRadius="2" VerticalAlignment="Bottom" Margin="2,0"/>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="00:00:00.100" To="#F2404040" Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation Duration="00:00:00.100" To="10"  Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Height)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="00:00:00.100" To="#F2181818" Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                                        <DoubleAnimation Duration="00:00:00.100" To="4"  Storyboard.TargetName="ScrollThumb" Storyboard.TargetProperty="(Border.Height)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CustomScrollBar" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Track x:Name="PART_Track">
+                            <Track.Thumb>
+                                <Thumb x:Name="ScrollThumb"/>
+                            </Track.Thumb>
+                        </Track>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="True"/>
+                                <Setter TargetName="ScrollThumb" Property="Style" Value="{StaticResource VerticalScrollThumb}"/>
+                                <Setter TargetName="PART_Track" Property="Width" Value="10"/>
+                                <Setter TargetName="PART_Track" Property="HorizontalAlignment" Value="Right"/>
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="ScrollThumb" Property="Style" Value="{StaticResource HorizontalScrollThumb}"/>
+                                <Setter TargetName="PART_Track" Property="Height" Value="10"/>
+                                <Setter TargetName="PART_Track" Property="VerticalAlignment" Value="Bottom"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type ScrollViewer}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Style="{StaticResource CustomScrollBar}"/>
+                            <ScrollBar x:Name="PART_HorizontalScrollBar" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Style="{StaticResource CustomScrollBar}"/>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -168,13 +269,13 @@
         <TextBox x:Name="ServerFilePath" HorizontalAlignment="Left" Height="35" Margin="146,31,0,0" TextWrapping="Wrap" Text="...\server.jar" VerticalAlignment="Top" Width="1009" Foreground="White" Background="#F2202020" BorderBrush="{x:Null}" TextChanged="ServerFilePath_TextChanged" MouseWheel="ServerFilePath_MouseWheel"/>
         <Button x:Name="BrowseServerFile" Content="Browse" HorizontalAlignment="Left" Height="35" Margin="1160,31,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="BrowseServerFile_Click"/>
 
-        <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="567" Margin="10,75,0,0" VerticalAlignment="Top" Width="625" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True" FontSize="12" MouseWheel="ServerOutputWindow_MouseWheel">
+        <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="567" Margin="10,75,0,0" VerticalAlignment="Top" Width="625" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True" FontSize="12" MouseWheel="ServerOutputWindow_MouseWheel" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <FlowDocument>
                 <Paragraph/>
             </FlowDocument>
         </RichTextBox>
         <TextBox x:Name="ServeroutputWindowScale" HorizontalAlignment="Left" Height="16" Margin="595,75,0,0" Text="100%" VerticalAlignment="Top" Width="40" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="ServeroutputWindowScale_TextChanged" FontSize="12" Background="#FF303030" Foreground="White" BorderBrush="#FF282828"/>
-        <Border Margin="645,75,335,78" Height="567" Width="300" Background="#F2202020" CornerRadius="8">
+        <Border x:Name="InfoPanelBorder" Margin="645,75,335,78" Height="567" Width="300" Background="#F2202020" CornerRadius="8">
             <TabControl x:Name="InfoPanel" HorizontalAlignment="Left" Height="567" VerticalAlignment="Top" Width="300" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0">
                 <TabItem x:Name="PlayerTabItem" Header="Players" Foreground="White">
                     <ListBox x:Name="PlayerListWindow" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White"/>

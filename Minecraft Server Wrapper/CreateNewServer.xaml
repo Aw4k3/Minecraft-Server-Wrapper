@@ -1,0 +1,168 @@
+﻿<Window x:Class="Minecraft_Server_Wrapper.CreateNewServer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Minecraft_Server_Wrapper"
+        mc:Ignorable="d"
+        Title="CreateNewServer" Height="300" Width="800" Foreground="White" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" FontFamily="Bahnschrift Light" FontSize="18" Background="#FF101010" MouseDown="Window_MouseDown">
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="17.5"/>
+                    <Setter Property="Padding" Value="12,7"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style TargetType="{x:Type Button}" x:Key="RoundedButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="ButtonBorder" BorderThickness="2" CornerRadius="17.5" Background="{TemplateBinding Background}">
+                            <Border.BorderBrush>
+                                <LinearGradientBrush EndPoint="0,0.5" StartPoint="1,0.5">
+                                    <GradientStop x:Name="ButtonBorderGradStop1" Color="White" Offset="0"/>
+                                    <GradientStop x:Name="ButtonBorderGradStop2" Color="White" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <ContentPresenter x:Name="ButtonContent" Content="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=GridWindow, Path=Background.ImageBrush.Source}" Value="">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#F2202020"/>
+                            </DataTrigger>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop1" Storyboard.TargetProperty="Color" To="#6eb2ff" Duration="00:00:00.100"/>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop2" Storyboard.TargetProperty="Color" To="#f9abff" Duration="00:00:00.200"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop1" Storyboard.TargetProperty="Color" To="White" Duration="00:00:00.100"/>
+                                        <ColorAnimation Storyboard.TargetName="ButtonBorderGradStop2" Storyboard.TargetProperty="Color" To="White" Duration="00:00:00.200"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush">
+                                    <Setter.Value>
+                                        <LinearGradientBrush EndPoint="0,0.5" StartPoint="1,0.5">
+                                            <GradientStop Color="#FF404040" Offset="0"/>
+                                            <GradientStop Color="#FF404040" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <DockPanel x:Name="TitleBar" Height="20" VerticalAlignment="Top" HorizontalAlignment="Center" Width="800" Background="#FF323280" LastChildFill="False">
+            <Grid Height="20" Width="800">
+                <Label Content="Minecraft Server" Height="20" Foreground="White" FontSize="11" MouseDown="Window_MouseDown"/>
+                <Button x:Name="Exit" Content="X" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="780,0,0,0" Click="Exit_Click"/>
+                <Button x:Name="Minimize" Content="-" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="11" Margin="760,0,20,0" Click="Minimize_Click"/>
+                <Button x:Name="WrapperSettings" Height="20" Width="20" BorderBrush="{x:Null}" FontSize="11" Margin="1220,0,40,0" Click="WrapperSettings_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Gear.png" Stretch="Uniform"/>
+                    </Button.Background>
+                </Button>
+            </Grid>
+        </DockPanel>
+
+        <Label Content="Install Folder" HorizontalAlignment="Left" Height="35" Margin="10,31,0,0" VerticalAlignment="Top" Width="156" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ServerDir" HorizontalAlignment="Left" Height="35" Margin="166,31,0,0" Text="...\Minecraft Server" VerticalAlignment="Top" Width="509" Foreground="White" Background="#F2202020" BorderBrush="{x:Null}" TextChanged="ServerDir_TextChanged" VerticalScrollBarVisibility="Disabled"/>
+        <Button x:Name="BrowseServerFile" Content="Browse" HorizontalAlignment="Left" Height="35" Margin="680,31,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="BrowseServerFile_Click"/>
+
+        <Label Content="Server Type" HorizontalAlignment="Left" Height="35" Margin="10,80,0,0" VerticalAlignment="Top" Width="156" Foreground="White" FontSize="24"/>
+        <ComboBox HorizontalAlignment="Left" Height="35" Margin="166,80,0,0" VerticalAlignment="Top" Width="230" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem Content="Vanilla"/>
+            <ComboBoxItem Content="Forge"/>
+            <ComboBoxItem Content="Bukkit"/>
+            <ComboBoxItem Content="CraftBukkit" IsSelected="True"/>
+            <ComboBoxItem Content="Spigot"/>
+        </ComboBox>
+        <Image x:Name="ServerTypeInfo" HorizontalAlignment="Left" Height="25" Margin="404,85,0,0" VerticalAlignment="Top" Width="25" Source="Info Synbol.png" Opacity="0"/>
+        <Label Content="Version" HorizontalAlignment="Left" Height="35" Margin="10,120,0,0" VerticalAlignment="Top" Width="156" Foreground="White" FontSize="24"/>
+        <ComboBox HorizontalAlignment="Left" Height="35" Margin="166,120,0,0" VerticalAlignment="Top" Width="230" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" SelectionChanged="ComboBox_SelectionChanged_1">
+            <ComboBoxItem Content="1.15.2" IsSelected="True"/>
+            <ComboBoxItem Content="1.15.1"/>
+            <ComboBoxItem Content="1.15"/>
+            <ComboBoxItem Content="1.14.4"/>
+            <ComboBoxItem Content="1.14.3"/>
+            <ComboBoxItem Content="1.14.2"/>
+            <ComboBoxItem Content="1.14.1"/>
+            <ComboBoxItem Content="1.14"/>
+            <ComboBoxItem Content="1.13.2"/>
+            <ComboBoxItem Content="1.13.1"/>
+            <ComboBoxItem Content="1.13"/>
+            <ComboBoxItem Content="1.12.2"/>
+            <ComboBoxItem Content="1.12.1"/>
+            <ComboBoxItem Content="1.12"/>
+            <ComboBoxItem Content="1.11.2"/>
+            <ComboBoxItem Content="1.11.1"/>
+            <ComboBoxItem Content="1.11"/>
+            <ComboBoxItem Content="1.10.2"/>
+            <ComboBoxItem Content="1.10.1"/>
+            <ComboBoxItem Content="1.10"/>
+            <ComboBoxItem Content="1.9.4"/>
+            <ComboBoxItem Content="1.9.3"/>
+            <ComboBoxItem Content="1.9.2"/>
+            <ComboBoxItem Content="1.9.1"/>
+            <ComboBoxItem Content="1.9"/>
+            <ComboBoxItem Content="1.8.9"/>
+            <ComboBoxItem Content="1.8.8"/>
+            <ComboBoxItem Content="1.8.7"/>
+            <ComboBoxItem Content="1.8.6"/>
+            <ComboBoxItem Content="1.8.5"/>
+            <ComboBoxItem Content="1.8.4"/>
+            <ComboBoxItem Content="1.8.3"/>
+            <ComboBoxItem Content="1.8.2"/>
+            <ComboBoxItem Content="1.8.1"/>
+            <ComboBoxItem Content="1.8"/>
+            <ComboBoxItem Content="1.7.10"/>
+            <ComboBoxItem Content="1.7.9"/>
+            <ComboBoxItem Content="1.7.8"/>
+            <ComboBoxItem Content="1.7.7"/>
+            <ComboBoxItem Content="1.7.6"/>
+            <ComboBoxItem Content="1.7.5"/>
+            <ComboBoxItem Content="1.7.4"/>
+            <ComboBoxItem Content="1.7.3"/>
+            <ComboBoxItem Content="1.7.2"/>
+            <ComboBoxItem Content="1.7.1"/>
+            <ComboBoxItem Content="1.7"/>
+            <ComboBoxItem Content="1.6.4"/>
+            <ComboBoxItem Content="1.6.3"/>
+            <ComboBoxItem Content="1.6.2"/>
+            <ComboBoxItem Content="1.6.1"/>
+            <ComboBoxItem Content="1.6"/>
+            <ComboBoxItem Content="1.5.2"/>
+            <ComboBoxItem Content="1.5.1"/>
+            <ComboBoxItem Content="1.5"/>
+            <ComboBoxItem Content="1.4.7"/>
+            <ComboBoxItem Content="1.4.6"/>
+            <ComboBoxItem Content="1.4.5"/>
+            <ComboBoxItem Content="1.4.4"/>
+            <ComboBoxItem Content="1.4.2"/>
+            <ComboBoxItem Content="1.3.2"/>
+            <ComboBoxItem Content="1.3.1"/>
+            <ComboBoxItem Content="1.2.5"/>
+            <ComboBoxItem Content="1.2.4"/>
+            <ComboBoxItem Content="1.2.3"/>
+            <ComboBoxItem Content="1.2.2"/>
+            <ComboBoxItem Content="1.2.1"/>
+        </ComboBox>
+        <Button x:Name="DownloadInstall" Content="Download and Install" HorizontalAlignment="Left" Height="35" Margin="10,255,0,0" VerticalAlignment="Top" Width="780" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="BrowseServerFile_Click" IsEnabled="False"/>
+    </Grid>
+</Window>

@@ -81,15 +81,6 @@
                 </Style>
             </Style.Resources>
         </Style>
-        <Style TargetType="{x:Type RichTextBox}">
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Padding" Value="2,3"/>
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="8"/>
-                </Style>
-            </Style.Resources>
-        </Style>
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -156,7 +147,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Border x:Name="TabItemContainer" Width="152" Height="30" Background="#F2202020" BorderBrush="#FF444444" BorderThickness="0,0,0,1" CornerRadius="8,8,0,0" Margin="-2">
+                        <Border x:Name="TabItemContainer" Width="{TemplateBinding Width}" Height="30" Background="#F2202020" BorderBrush="#FF444444" BorderThickness="0,0,0,1" CornerRadius="8,8,0,0" Margin="-2">
                             <ContentPresenter x:Name="TabItemContentPresenter" ContentSource="Header" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -290,20 +281,40 @@
         <Label Content="Server File" HorizontalAlignment="Left" Height="35" Margin="10,31,0,0" VerticalAlignment="Top" Width="136" Foreground="White" FontSize="24"/>
         <TextBox x:Name="ServerFilePath" HorizontalAlignment="Left" Height="35" Margin="146,31,0,0" Text="...\server.jar" VerticalAlignment="Top" Width="934" Foreground="White" Background="#F2202020" BorderBrush="{x:Null}" TextChanged="ServerFilePath_TextChanged" MouseWheel="ServerFilePath_MouseWheel" VerticalScrollBarVisibility="Disabled"/>
         <Button x:Name="BrowseServerFile" Content="Browse" HorizontalAlignment="Left" Height="35" Margin="1085,31,0,0" VerticalAlignment="Top" Width="110" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="BrowseServerFile_Click"/>
-        <Button x:Name="CreateNewServer" Content="New" HorizontalAlignment="Left" Height="35" Margin="1200,31,0,0" VerticalAlignment="Top" Width="70" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="BrowseServerFile_Click"/>
+        <Button x:Name="CreateNewServer" Content="New" HorizontalAlignment="Left" Height="35" Margin="1200,31,0,0" VerticalAlignment="Top" Width="70" Background="{x:Null}" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" Click="CreateNewServer_Click"/>
 
-        <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="567" Margin="10,75,0,0" VerticalAlignment="Top" Width="625" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True" FontSize="12" MouseWheel="ServerOutputWindow_MouseWheel" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <FlowDocument>
-                <Paragraph/>
-            </FlowDocument>
-        </RichTextBox>
-        <TextBox x:Name="ServeroutputWindowScale" HorizontalAlignment="Left" Height="16" Margin="595,75,0,0" Text="100%" VerticalAlignment="Top" Width="40" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="ServeroutputWindowScale_TextChanged" FontSize="12" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="ServeroutputWindowScale_LostFocus"/>
+        <Border x:Name="LargeInfoPanelBorder" Margin="10,75,0,0" Height="567" Width="625" Background="#F2202020" CornerRadius="8" Opacity="0.95" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TabControl x:Name="LargeInfoPanel" HorizontalAlignment="Left" Height="567" VerticalAlignment="Top" Width="625" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0">
+                <TabItem x:Name="Console" Header="Console" Foreground="White" Background="{x:Null}" Width="310">
+                    <Grid>
+                        <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="537" VerticalAlignment="Top" Width="623" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True" FontSize="12" MouseWheel="ServerOutputWindow_MouseWheel" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="2,3">
+                            <FlowDocument>
+                                <Paragraph/>
+                            </FlowDocument>
+                        </RichTextBox>
+                        <TextBox x:Name="ServeroutputWindowScale" HorizontalAlignment="Left" Height="16" Margin="585,0,-327,0" Text="100%" VerticalAlignment="Top" Width="40" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="ServeroutputWindowScale_TextChanged" FontSize="12" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="ServeroutputWindowScale_LostFocus"/>
+                    </Grid>
+                </TabItem>
+                <TabItem x:Name="CommandsHistoryPanel" Header="Command History" Foreground="White" Background="{x:Null}" Width="310">
+                    <ListBox x:Name="CommandHistoryListBox" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="537" VerticalAlignment="Top" Width="623" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Execute" Click="CommandHistory_Execute_Click"/>
+                                <MenuItem Header="Copy to Clipboard" Click="CommandHistory_CopyToClipboard_Click"/>
+                                <MenuItem Header="Copy to Command Box" Click="CommandHistory_CopyToCommandBox_Click"/>
+                                <MenuItem Header="Remove from List" Click="CommandHistory_RemoveFromList_Click"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
+                </TabItem>
+            </TabControl>
+        </Border>
         <Border x:Name="InfoPanelBorder" Margin="645,75,335,78" Height="567" Width="300" Background="#F2202020" CornerRadius="8" Opacity="0.95">
             <TabControl x:Name="InfoPanel" HorizontalAlignment="Left" Height="567" VerticalAlignment="Top" Width="300" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0">
-                <TabItem x:Name="PlayerTabItem" Header="Players" Foreground="White" Background="{x:Null}">
+                <TabItem x:Name="PlayerTabItem" Header="Players" Foreground="White" Background="{x:Null}" Width="148">
                     <ListBox x:Name="PlayerListWindow" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White"/>
                 </TabItem>
-                <TabItem x:Name="ModPluginsTabItem" Header="Plugins/Mods" Foreground="White" Background="{x:Null}">
+                <TabItem x:Name="ModPluginsTabItem" Header="Plugins/Mods" Foreground="White" Background="{x:Null}" Width="148">
                     <ListBox x:Name="ModPluginWindow" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
                         <ListBox.ContextMenu>
                             <ContextMenu>

@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Input;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using WinForms = System.Windows.Forms;
 using System.IO;
-using System.Windows.Media;
-using System.Timers;
-using System.Windows.Threading;
-using System.Windows.Media.Imaging;
-using System.Windows.Controls;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using WinForms = System.Windows.Forms;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -24,6 +24,7 @@ namespace Minecraft_Server_Wrapper
         ServerWrapper serverWrapper = new ServerWrapper();
         ServerPropertiesManager serverPropertiesManager = new ServerPropertiesManager();
         WrapperSettings wrapperSettings = new WrapperSettings();
+        FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
 
         Color DefaultOutputColor;
         Color WarningOutputColor;
@@ -87,6 +88,39 @@ namespace Minecraft_Server_Wrapper
 
             //Skinning [wip]
             UpdateSkin(0.95f, serverWrapper.BackgroundSkin);
+
+            fileSystemWatcher.Changed += ModsPlugins_OnChanged;
+            fileSystemWatcher.Created += ModsPlugins_OnChanged;
+            fileSystemWatcher.Deleted += ModsPlugins_OnChanged;
+            fileSystemWatcher.Renamed += ModsPlugins_OnChanged;
+
+            fileSystemWatcher.EnableRaisingEvents = true;
+        }
+
+        private void ModsPlugins_OnChanged(object sender, FileSystemEventArgs e)
+        {
+            Dispatcher.Invoke(() => {
+                ModPluginWindow.Items.Clear();
+                if (Directory.Exists(WorkingDirectory + @"\plugins"))
+                {
+                    ModPluginsTabItem.Header = "Plugins";
+                    string[] _Plugins = Directory.GetFiles(WorkingDirectory + @"\plugins");
+                    foreach (var item in _Plugins)
+                    {
+                        ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item));
+                    }
+                }
+
+                if (Directory.Exists(WorkingDirectory + @"\mods"))
+                {
+                    ModPluginsTabItem.Header = "Mods";
+                    string[] _Mods = Directory.GetFiles(WorkingDirectory + @"\mods");
+                    foreach (var item in _Mods)
+                    {
+                        ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item));
+                    }
+                }
+            });
         }
 
         public void UpdateSkin(float Opacity, string BG_Path)
@@ -126,7 +160,18 @@ namespace Minecraft_Server_Wrapper
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationShutdownHandler();
+            if (ServerIsRunning == true)
+            {
+                ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
+                ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
+                ServerProcess.Kill();
+            }
+
+            fileSystemWatcher.Changed -= ModsPlugins_OnChanged;
+            fileSystemWatcher.Created -= ModsPlugins_OnChanged;
+            fileSystemWatcher.Deleted -= ModsPlugins_OnChanged;
+            fileSystemWatcher.Renamed -= ModsPlugins_OnChanged;
+
             Application.Current.Shutdown();
         }
 
@@ -214,6 +259,7 @@ namespace Minecraft_Server_Wrapper
                         ShowInExplorer.IsEnabled = true;
                         BackupWorld.IsEnabled = true;
 
+                        //Enable Properties Editor if server.properties exists
                         if (File.Exists(WorkingDirectory + @"\server.properties"))
                         {
                             EditServerProperties.IsEnabled = true;
@@ -223,11 +269,12 @@ namespace Minecraft_Server_Wrapper
                         serverWrapper.ServerPath = ServerFilePath.Text;
                         serverWrapper.Save();
 
+                        //Check is server is using mods or plugins and display those mods/plugins
                         ModPluginWindow.Items.Clear();
-
                         if (Directory.Exists(WorkingDirectory + @"\plugins"))
                         {
                             ModPluginsTabItem.Header = "Plugins";
+                            fileSystemWatcher.Path = WorkingDirectory + @"\plugins";
                             string[] _Plugins = Directory.GetFiles(WorkingDirectory + @"\plugins");
                             foreach (var item in _Plugins)
                             {
@@ -238,6 +285,7 @@ namespace Minecraft_Server_Wrapper
                         if (Directory.Exists(WorkingDirectory + @"\mods"))
                         {
                             ModPluginsTabItem.Header = "Mods";
+                            fileSystemWatcher.Path = WorkingDirectory + @"\mods";
                             string[] _Mods = Directory.GetFiles(WorkingDirectory + @"\mods");
                             foreach (var item in _Mods)
                             {
@@ -310,6 +358,14 @@ namespace Minecraft_Server_Wrapper
                 StatusIndicator.Content = "Server path changed";
                 StatusLightColor(1);
             }
+
+            ServerCheck("ServerPath");
+        }
+
+        //Make new Server
+        private void CreateNewServer_Click(object sender, RoutedEventArgs e)
+        {
+            new CreateNewServer().Show();
         }
 
         //Setting Server Path
@@ -338,11 +394,11 @@ namespace Minecraft_Server_Wrapper
         {
             if (Directory.Exists(WorkingDirectory + @"\mods"))
             {
-                File.Delete(WorkingDirectory + @"\mods\" + ModPluginWindow.SelectedItem.ToString());
+                File.Delete(WorkingDirectory + @"\mods\" + ModPluginWindow.SelectedItem.ToString() + ".jar");
             }
             if (Directory.Exists(WorkingDirectory + @"\plugins"))
             {
-                File.Delete(WorkingDirectory + @"\plugins\" + ModPluginWindow.SelectedItem.ToString());
+                File.Delete(WorkingDirectory + @"\plugins\" + ModPluginWindow.SelectedItem.ToString() + ".jar");
             }
         }
 
@@ -350,11 +406,11 @@ namespace Minecraft_Server_Wrapper
         {
             if (Directory.Exists(WorkingDirectory + @"\mods"))
             {
-                Process.Start("explorer.exe", WorkingDirectory + @"\mods\" + ModPluginWindow.SelectedItem.ToString());
+                Process.Start("explorer.exe", "/select, \"" + WorkingDirectory + @"\mods\" + ModPluginWindow.SelectedItem.ToString() + ".jar\"");
             }
             if (Directory.Exists(WorkingDirectory + @"\plugins"))
             {
-                Process.Start("explorer.exe", WorkingDirectory + @"\plugins\" + ModPluginWindow.SelectedItem.ToString());
+                Process.Start("explorer.exe", "/select, \"" + WorkingDirectory + @"\plugins\" + ModPluginWindow.SelectedItem.ToString() + ".jar\"");
             }
         }
 
@@ -448,14 +504,12 @@ namespace Minecraft_Server_Wrapper
                 }
             }
         }
-        
-        bool WorldFoldersKnown;
-        DirectoryInfo[] WorldFolders;
-        int WorldFoldersIndex = 0;
-        /*private async void CreateWorldBackup()
+
+        private async void BackupWorld_Click(object sender, RoutedEventArgs e)
         {
             BackupWorld.IsEnabled = false;
             BackupWorld.Content = "Backing up Worlds";
+            ServerOutputWindow.AppendText("\n[Server Wrapper] Starting Backup");
 
             //Check backups directory exists
             if (!Directory.Exists(WorkingDirectory + @"\Backups"))
@@ -463,82 +517,28 @@ namespace Minecraft_Server_Wrapper
                 Directory.CreateDirectory(WorkingDirectory + @"\Backups");
             }
 
-            //Find all world folders in server directory
-            if (!WorldFoldersKnown)
-            {
-                DirectoryInfo[] Directories = WorkingDirectory.GetDirectories();
+            //Create Folder to hold backups of current time
+            string DestinationFolder = WorkingDirectory + "\\Backups\\" + DateTime.Now.ToString("dd-mm-yyyy-_-HH-mm-ss");
+            Directory.CreateDirectory(DestinationFolder);
 
-                int i = 0;
-                foreach (var item in Directories)
+            //Find all world folders
+            await Task.Run(() => {
+                foreach (var item in Directory.EnumerateDirectories(WorkingDirectory.ToString()))
                 {
-                    if (File.Exists(item + @"\level.dat"))
+                    if (File.Exists(item + "\\level.dat"))
                     {
-                        WorldFolders[i++] = item;
+                        string[] WorldName = item.Split('\\');
+                        Directory.CreateDirectory(DestinationFolder + "\\" + WorldName[WorldName.Length - 1]);
+                        Dispatcher.Invoke(() => { ServerOutputWindow.AppendText("\n[Server Wrapper] Backing up world \"" + WorldName[WorldName.Length - 1] + "\""); });
+                        DirectoryCopy(item, DestinationFolder + "\\" + WorldName[WorldName.Length - 1], true);
+                        Dispatcher.Invoke(() => { ServerOutputWindow.AppendText("\n[Server Wrapper] Finished backing up world \"" + WorldName[WorldName.Length - 1] + "\""); });
                     }
                 }
-                ServerOutputWindow.AppendText("\nNumber of worlds found: " + i);
-                WorldFoldersKnown = true;
-            }
+            });
 
-            //Copy world folders to backup directory
-            foreach (var item in WorldFolders)
-            {
-                ServerOutputWindow.AppendText("\nBacking up \"" + item.Name + "\" to ...\\Backups\\" + item.Name);
-                DirectoryCopy(WorldFolders[WorldFoldersIndex].ToString(), WorkingDirectory + @"\Backups\ " + WorldFolders[WorldFoldersIndex].Name.ToString() + DateTime.Now, true);
-            }
-
+            ServerOutputWindow.AppendText("\n[Server Wrapper] Backuping Worlds Complete");
             BackupWorld.Content = "Backup Server World(s)";
             BackupWorld.IsEnabled = true;
-        }*/
-        
-        private async void BackupWorld_Click(object sender, RoutedEventArgs e)
-        {
-            new Task(async () =>
-            {
-                BackupWorld.IsEnabled = false;
-                BackupWorld.Content = "Backing up Worlds";
-
-                //Check backups directory exists
-                if (!Directory.Exists(WorkingDirectory + @"\Backups"))
-                {
-                    Directory.CreateDirectory(WorkingDirectory + @"\Backups");
-                }
-
-                //Find all world folders in server directory
-                if (!WorldFoldersKnown)
-                {
-                    DirectoryInfo[] Directories = WorkingDirectory.GetDirectories();
-
-                    int i = 0;
-                    foreach (var item in Directories)
-                    {
-                        if (File.Exists(item + @"\level.dat"))
-                        {
-                            WorldFolders[i++] = new DirectoryInfo(item.ToString());
-                            //WorldFolders[i++] = item;
-                        }
-                    }
-                    ServerOutputWindow.AppendText("\nNumber of worlds found: " + i);
-                    WorldFoldersKnown = true;
-                }
-
-                //Copy world folders to backup directory
-                try
-                {
-                    foreach (var item in WorldFolders)
-                    {
-                        ServerOutputWindow.AppendText("\nBacking up \"" + item.Name + "\" to ...\\Backups\\" + item.Name);
-                        DirectoryCopy(WorldFolders[WorldFoldersIndex].ToString(), WorkingDirectory + @"\Backups\ " + WorldFolders[WorldFoldersIndex].Name.ToString() + DateTime.Now, true);
-                    }
-                }
-                catch (Exception f)
-                {
-                    ServerOutputWindow.AppendText(f.ToString());
-                }
-
-                BackupWorld.Content = "Backup Server World(s)";
-                BackupWorld.IsEnabled = true;
-            });
         }
 
         //Clear Server Output
@@ -633,17 +633,6 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
-        //If application is exited while server is running
-        private void ApplicationShutdownHandler()
-        {
-            if (ServerIsRunning == true)
-            {
-                ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
-                ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
-                ServerProcess.Kill();
-            }
-        }
-
         //On server start and stop
         private void OnServerStart()
         {
@@ -707,7 +696,7 @@ namespace Minecraft_Server_Wrapper
             StartStopServer.Content = "Start Server";
         }
 
-        //Start and Stop Server Handler
+        //Start Server Handler
         private void StartStopServer_Click(object sender, RoutedEventArgs e)
         {
             if (!ServerIsRunning)
@@ -728,9 +717,10 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
+        //Handle data recieved from server
         private void ServerOutput_OutputDataRecieved(object sender, DataReceivedEventArgs e)
         {
-            Dispatcher.InvokeAsync(new Action(() =>
+            Dispatcher.InvokeAsync(() =>
             {
                 try
                 {
@@ -776,9 +766,10 @@ namespace Minecraft_Server_Wrapper
                 }
                 
                 ServerOutputWindow.ScrollToEnd();
-            }));
+            });
         }
 
+        //Stop Server Handler
         private void ServerClose_Exited(object sender, EventArgs e)
         {
             Dispatcher.Invoke(new Action(() =>
@@ -815,11 +806,11 @@ namespace Minecraft_Server_Wrapper
 
         private void SendCommand_Click(object sender, RoutedEventArgs e)
         {
-            string[] CommandsToSend;
-            CommandsToSend = CommandBox.Text.Split(Convert.ToChar(";"));
+            string[] CommandsToSend = CommandBox.Text.Split(Convert.ToChar(";"));
             foreach (var item in CommandsToSend)
             {
                 ServerProcess.StandardInput.WriteLine(item.Trim());
+                CommandHistoryListBox.Items.Add(item.Trim());
             }
             CommandBox.Clear();
             //UpdateCommandHistory();
@@ -835,29 +826,33 @@ namespace Minecraft_Server_Wrapper
 
         private void CommandBox_KeyDown(object sender, KeyEventArgs e)
         {
+            //Show command hints
             if (e.Key == Key.Tab)
             {
                 //ServerProcess.StandardInput.Write(CommandBox.Text + Key.Tab);
             }
 
+            //Send Command(s)
             if (e.Key == Key.Enter && ServerIsRunning)
             {
-                string[] CommandsToSend;
-                CommandsToSend = CommandBox.Text.Split(';');
+                string[] CommandsToSend = CommandBox.Text.Split(';');
                 foreach (var item in CommandsToSend)
                 {
                     ServerProcess.StandardInput.WriteLine(item.Trim());
+                    CommandHistoryListBox.Items.Add(item.Trim());
                 }
                 CommandBox.Clear();
                 //UpdateCommandHistory();
             }
 
+            //Cycle through command history backwards
             if (e.Key == Key.Up && CommandToGetIndex <= CommandHistory.Length)
             {/*
                 CommandBox.Text = CommandHistory[CommandToGetIndex];
                 CommandToGetIndex--;*/
             }
 
+            //Cycle through command history forwards
             if (e.Key == Key.Down && CommandToGetIndex >= CommandHistory.Length)
             {/*
                 CommandBox.Text = CommandHistory[CommandToGetIndex];
@@ -931,6 +926,26 @@ namespace Minecraft_Server_Wrapper
                     ServeroutputWindowScale.Text = scale + "%";
                 }
             }*/
+        }
+
+        private void CommandHistory_Execute_Click(object sender, RoutedEventArgs e)
+        {
+            ServerProcess.StandardInput.WriteLine(CommandHistoryListBox.SelectedItem.ToString());
+        }
+
+        private void CommandHistory_CopyToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(CommandHistoryListBox.SelectedItem.ToString());
+        }
+
+        private void CommandHistory_CopyToCommandBox_Click(object sender, RoutedEventArgs e)
+        {
+            CommandBox.Text = CommandHistoryListBox.SelectedItem.ToString();
+        }
+
+        private void CommandHistory_RemoveFromList_Click(object sender, RoutedEventArgs e)
+        {
+            CommandHistoryListBox.Items.Remove(CommandHistoryListBox.SelectedItem);
         }
     }
 }

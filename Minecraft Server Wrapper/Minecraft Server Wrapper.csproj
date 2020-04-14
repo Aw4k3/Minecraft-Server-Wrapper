@@ -226,5 +226,8 @@
   <ItemGroup>
     <Resource Include="Info Synbol.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Server Links\Forge.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

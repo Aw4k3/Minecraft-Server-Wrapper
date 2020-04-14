@@ -82,10 +82,13 @@
         <Label x:Name="WarningOutputColorLabel" Content="Warning Output Color" HorizontalAlignment="Left" Height="37" Margin="10,193,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
         <Rectangle x:Name="WarningOutputColor" Fill="Yellow" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,197,10,173" Height="30" MouseUp="WarningOutputColor_MouseUp" Cursor="Hand"/>
         <Label x:Name="ErrorOutputColorLabel" Content="Error Output Color" HorizontalAlignment="Left" Height="37" Margin="10,235,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
-        <Rectangle x:Name="ErrorOutputColor" Fill="Red" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,238,10,132" Height="30" MouseUp="ErrorOutputColor_MouseUp" Cursor="Hand"/>
-        <Label Content="Foreground Opacity (%)" HorizontalAlignment="Left" Height="37" Margin="10,277,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
-        <TextBox x:Name="ForegroundOpacityValue" HorizontalAlignment="Left" Height="25" Margin="374,282,0,0" Text="95" VerticalAlignment="Top" Width="66" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" TextChanged="ForegroundOpacityValue_TextChanged"/>
-        <Label Content="Background Skin" HorizontalAlignment="Left" Height="37" Margin="10,319,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
-        <Button x:Name="ChangeBackgroundSkin" Content="No Skin" HorizontalAlignment="Left" Height="37" Margin="300,319,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF0080FF" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Right" Style="{StaticResource SkinButton}" Click="ChangeBackgroundSkin_Click" Cursor="Hand" ToolTip="Shift Click to clear"/>
+        <Rectangle x:Name="ErrorOutputColor" Fill="#FFFF4040" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,238,10,132" Height="30" MouseUp="ErrorOutputColor_MouseUp" Cursor="Hand"/>
+        <Label x:Name="ErrorOutputColorLabel_Copy" Content="Player Event Output Color" HorizontalAlignment="Left" Height="37" Margin="10,277,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Rectangle x:Name="ErrorOutputColor_Copy" Fill="#FF96BEFF" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,281,10,89" Height="30" MouseUp="ErrorOutputColor_MouseUp" Cursor="Hand"/>
+        <Label Content="Foreground Opacity (%)" HorizontalAlignment="Left" Height="37" Margin="10,319,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <TextBox x:Name="ForegroundOpacityValue" HorizontalAlignment="Left" Height="25" Margin="374,326,0,0" Text="95" VerticalAlignment="Top" Width="66" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" TextChanged="ForegroundOpacityValue_TextChanged"/>
+        <Label Content="Background Skin" HorizontalAlignment="Left" Height="37" Margin="10,361,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Button x:Name="ChangeBackgroundSkin" Content="No Skin" HorizontalAlignment="Left" Height="37" Margin="300,361,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF0080FF" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Right" Style="{StaticResource SkinButton}" Click="ChangeBackgroundSkin_Click" Cursor="Hand" ToolTip="Shift Click to clear"/>
+
     </Grid>
 </Window>

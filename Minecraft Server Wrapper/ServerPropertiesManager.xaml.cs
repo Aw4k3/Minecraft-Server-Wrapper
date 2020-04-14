@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
 using System.Windows.Media.Animation;
+using System.Collections.Generic;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -50,74 +51,31 @@ namespace Minecraft_Server_Wrapper
         }
         
         Grid grid = new Grid();
+        //List<Canvas> CanvasArray = new List<Canvas>();
+        
+
         private void SettingSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string searchQuery = Regex.Replace(SettingSearch.Text.ToLower(), @"\s+", "");
-            if (SettingSearch.Text == null)
+            UIElementCollection uIElementCollection = new UIElementCollection(this, grid);
+            string searchQuery = Regex.Replace(SettingSearch.Text.ToLower(), @"\s+", ""); //Remove Spaces
+            if (SettingSearch.Text == "")
             {
-                foreach (Label label in grid.Children)
+                foreach (Canvas canvas in uIElementCollection)
                 {
-                    label.Opacity = 1;
-                }
-                foreach (CheckBox checkbox in grid.Children)
-                {
-                    checkbox.Opacity = 1;
-                }
-                foreach (TextBox textBox in grid.Children)
-                {
-                    if (textBox.Name != "SettingSearch")
-                    {
-                        textBox.Opacity = 1;
-                    }
-                }
-                foreach (ComboBox combobox in grid.Children)
-                {
-                    combobox.Opacity = 1;
+                    canvas.Opacity = 1;
                 }
             }
 
-            if (searchQuery != null)
+            if (searchQuery != "")
             {
-                try
-                {
-                    SettingDescription.Content = searchQuery;
-                }
-                catch (Exception)
-                {
-                }
+                try { SettingDescription.Content = searchQuery; } catch (Exception) { }
 
-                foreach (Label label in grid.Children)
+                foreach (Canvas canvas in uIElementCollection)
                 {
-                    SettingDescription.Content = label.Content;
-                    string i = Regex.Replace(label.Content.ToString().ToLower(), @"\s+", "");
-                    if (!i.Contains(searchQuery))
+                    if (!canvas.Name.ToLower().Contains(searchQuery))
                     {
-                        label.Opacity = 0.5;
-                        SettingDescription.Content = label.Opacity.ToString();
-                    }
-                }
-                foreach (CheckBox checkbox in grid.Children)
-                {
-                    string i = Regex.Replace(checkbox.Content.ToString().ToLower(), @"\s+", "");
-                    if (!i.Contains(searchQuery))
-                    {
-                        checkbox.Opacity = 0.5;
-                    }
-                }
-                foreach (TextBox textbox in grid.Children)
-                {
-                    string i = Regex.Replace(textbox.Text.ToLower(), @"\s+", "");
-                    if (!i.Contains(searchQuery) && textbox.Name != "SettingsSearch")
-                    {
-                        textbox.Opacity = 0.5;
-                    }
-                }
-                foreach (ComboBox combobox in grid.Children)
-                {
-                    string i = Regex.Replace(combobox.Name.ToLower(), @"\s+", "");
-                    if (!i.Contains(searchQuery))
-                    {
-                        combobox.Opacity = 0.5;
+                        SettingDescription.Content += canvas.Name;
+                        canvas.Opacity = 0.5;
                     }
                 }
             }
@@ -143,15 +101,18 @@ namespace Minecraft_Server_Wrapper
             MaxTickTimeValue.Text = GetStrVal("max-tick-time");
             QueryPortValue.Text = GetStrVal("query.port");
             GeneratingSettingsValue.Text = GetStrVal("generator-settings");
-            //ForceGamemodeValue.IsChecked = GetBoolVal("force-gamemode", ForceGamemodeValue);
+            ForceGamemodeValue.IsChecked = GetBoolVal("force-gamemode", ForceGamemodeValue);
+            /*
             if (GetBoolVal("force-gamemode", ForceGamemodeValue))
             {
                 ForceGamemodeValue.BeginStoryboard((Storyboard)ForceGamemodeValue.FindResource("CheckBoxChecking"));
                 ForceGamemodeValue.IsChecked = true;
             }
+            */
 
         }
 
+        //Obtaining data from Server.properties
         private string GetStrVal(string ValToFind)
         {
             string result = "";
@@ -160,14 +121,14 @@ namespace Minecraft_Server_Wrapper
             {
                 if (item.Contains(ValToFind))
                 {
-                    result = item.Split(Convert.ToChar("=")).Last();
+                    result = item.Split('=').Last();
                 }
             }
 
             return result;
         }
 
-        private bool GetBoolVal(string ValToFind, CheckBox CheckBox)
+        private bool GetBoolVal(string ValToFind, CheckBox checkBox)
         {
             bool result = false;
 
@@ -175,15 +136,16 @@ namespace Minecraft_Server_Wrapper
             {
                 if (item.Contains(ValToFind))
                 {
-                    result = Convert.ToBoolean(item.Split(Convert.ToChar("=")).Last());
+                    Boolean.TryParse(item.Split('=').Last(), out result);
                 }
             }
-            /*
+
             if (result)
             {
-                CheckBox.BeginStoryboard(grid.FindResource("CheckBoxChecking") as Storyboard);
+                checkBox.IsChecked = true;
+                checkBox.BeginStoryboard(grid.FindResource("CheckBoxChecking") as Storyboard);
             }
-            */
+
             return result;
         }
     }

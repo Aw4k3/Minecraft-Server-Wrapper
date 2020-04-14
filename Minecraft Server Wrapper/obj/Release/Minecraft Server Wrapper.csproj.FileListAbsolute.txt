@@ -17,3 +17,7 @@ C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrappe
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\Minecraft Server Wrapper.application
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\Minecraft Server Wrapper.exe
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\Minecraft Server Wrapper.pdb
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\ServerPropertiesManager.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\WrapperSettings.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\ServerPropertiesManager.baml
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Release\WrapperSettings.baml

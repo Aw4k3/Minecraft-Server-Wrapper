@@ -3,9 +3,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using WinForms = System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using WinForms = System.Windows.Forms;
 
 namespace Minecraft_Server_Wrapper
 {
@@ -16,7 +16,7 @@ namespace Minecraft_Server_Wrapper
     {
 
         ServerWrapper serverWrapper = new ServerWrapper();
-        ColorPicker colorPicker = new ColorPicker();
+        WinForms.ColorDialog colorDialog = new WinForms.ColorDialog();
 
         public WrapperSettings()
         {
@@ -81,40 +81,41 @@ namespace Minecraft_Server_Wrapper
 
         private void TitleBarColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (colorPicker.ShowDialog() == true)
+            if (colorDialog.ShowDialog() == WinForms.DialogResult.OK)
             {
-                TitleBarColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
-                serverWrapper.TitleBarColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                
+                TitleBarColor.Fill = new SolidColorBrush(Color.FromRgb(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
+                serverWrapper.TitleBarColor = colorDialog.Color;
                 serverWrapper.Save();
             }
         }
 
         private void DefaultOutputColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (colorPicker.ShowDialog() == true)
+            if (colorDialog.ShowDialog() == WinForms.DialogResult.OK)
             {
-                DefaultOutputColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
-                serverWrapper.DefaultOutputColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                DefaultOutputColor.Fill = new SolidColorBrush(Color.FromRgb(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
+                serverWrapper.DefaultOutputColor = colorDialog.Color;
                 serverWrapper.Save();
             }
         }
 
         private void WarningOutputColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (colorPicker.ShowDialog() == true)
+            if (colorDialog.ShowDialog() == WinForms.DialogResult.OK)
             {
-                WarningOutputColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
-                serverWrapper.WarningOutputColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                WarningOutputColor.Fill = new SolidColorBrush(Color.FromRgb(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
+                serverWrapper.WarningOutputColor = colorDialog.Color;
                 serverWrapper.Save();
             }
         }
 
         private void ErrorOutputColor_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (colorPicker.ShowDialog() == true)
+            if (colorDialog.ShowDialog() == WinForms.DialogResult.OK)
             {
-                ErrorOutputColor.Fill = new SolidColorBrush(colorPicker.FinalRGBResult);
-                serverWrapper.ErrorOutputColor = System.Drawing.Color.FromArgb(1, colorPicker.FinalRGBResult.R, colorPicker.FinalRGBResult.G, colorPicker.FinalRGBResult.B);
+                ErrorOutputColor.Fill = new SolidColorBrush(Color.FromRgb(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
+                serverWrapper.ErrorOutputColor = colorDialog.Color;
                 serverWrapper.Save();
             }
         }
@@ -176,23 +177,26 @@ namespace Minecraft_Server_Wrapper
 
         private void ForegroundOpacityValue_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (IsTextAllowed(ForegroundOpacityValue.Text) && Convert.ToInt32(ForegroundOpacityValue.Text) >= 0 && Convert.ToInt32(ForegroundOpacityValue.Text) <= 100)
+            if (ForegroundOpacityValue.Text != null)
             {
-                if (Convert.ToInt32(ForegroundOpacityValue.Text) != 0)
+                if (IsTextAllowed(ForegroundOpacityValue.Text) && Convert.ToInt32(ForegroundOpacityValue.Text) >= 0 && Convert.ToInt32(ForegroundOpacityValue.Text) <= 100)
                 {
-                    //new MainWindow().ServerOutputWindow.Opacity = Convert.ToInt32(ForegroundOpacityValue.Text) / 100;
-                    serverWrapper.ForegroundOpacity = Convert.ToInt32(ForegroundOpacityValue.Text) / 100;
+                    if (Convert.ToInt32(ForegroundOpacityValue.Text) != 0)
+                    {
+                        //new MainWindow().ServerOutputWindow.Opacity = Convert.ToInt32(ForegroundOpacityValue.Text) / 100;
+                        serverWrapper.ForegroundOpacity = Convert.ToInt32(ForegroundOpacityValue.Text) / 100;
+                    }
+                    if (Convert.ToInt32(ForegroundOpacityValue.Text) == 0)
+                    {
+                        //new MainWindow().ServerOutputWindow.Opacity = 0;
+                        serverWrapper.ForegroundOpacity = 0;
+                    }
                 }
-                if (Convert.ToInt32(ForegroundOpacityValue.Text) == 0)
-                {
-                    //new MainWindow().ServerOutputWindow.Opacity = 0;
-                    serverWrapper.ForegroundOpacity = 0;
-                }
-            }
 
-            if (!IsTextAllowed(ForegroundOpacityValue.Text))
-            {
-                ForegroundOpacityValue.Text = Regex.Replace(ForegroundOpacityValue.Text, "[^0-9]", "");
+                if (!IsTextAllowed(ForegroundOpacityValue.Text))
+                {
+                    ForegroundOpacityValue.Text = Regex.Replace(ForegroundOpacityValue.Text, "[^0-9]", "");
+                }
             }
         }
 
@@ -214,6 +218,7 @@ namespace Minecraft_Server_Wrapper
                     serverWrapper.BackgroundSkin = BackgroundSkinFile.FileName;
                     serverWrapper.Save();
                     ChangeBackgroundSkin.Content = Path.GetFileName(BackgroundSkinFile.FileName);
+                    new MainWindow().UpdateSkin(Convert.ToSingle(ForegroundOpacityValue.Text), serverWrapper.BackgroundSkin);
                 }
             }
         }

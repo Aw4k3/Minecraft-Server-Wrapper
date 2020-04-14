@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("colorselect.cur")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("server%20links/forge.txt")]
 
 

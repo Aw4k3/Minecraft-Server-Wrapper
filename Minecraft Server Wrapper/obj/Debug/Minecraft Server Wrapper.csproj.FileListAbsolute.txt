@@ -19,7 +19,31 @@ C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrappe
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.application
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerPropertiesManager.g.cs
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerPropertiesManager.baml
-C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ColorPicker.g.cs
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\WrapperSettings.g.cs
-C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ColorPicker.baml
 C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\WrapperSettings.baml
+C:\Users\Potato PC\Documents\Minecraft\Servers\Craftbukkit 1.14.4 Survival\Minecraft Server Wrapper.exe.config
+C:\Users\Potato PC\Documents\Minecraft\Servers\Craftbukkit 1.14.4 Survival\Minecraft Server Wrapper.exe.manifest
+C:\Users\Potato PC\Documents\Minecraft\Servers\Craftbukkit 1.14.4 Survival\Minecraft Server Wrapper.application
+C:\Users\Potato PC\Documents\Minecraft\Servers\Craftbukkit 1.14.4 Survival\Minecraft Server Wrapper.exe
+C:\Users\Potato PC\Documents\Minecraft\Servers\Craftbukkit 1.14.4 Survival\Minecraft Server Wrapper.pdb
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerStartSettings.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\ServerStartSettings.baml
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Xceed.Wpf.AvalonDock.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Xceed.Wpf.AvalonDock.Themes.Aero.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Xceed.Wpf.AvalonDock.Themes.Metro.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Xceed.Wpf.AvalonDock.Themes.VS2010.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\Xceed.Wpf.Toolkit.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\cs-CZ\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\de\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\es\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\fr\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\hu\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\it\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\pt-BR\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\Minecraft Server Wrapper.csproj.CopyComplete
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\CreateNewServer.g.cs
+C:\Users\Potato PC\source\repos\Minecraft Server Wrapper\Minecraft Server Wrapper\obj\Debug\CreateNewServer.baml

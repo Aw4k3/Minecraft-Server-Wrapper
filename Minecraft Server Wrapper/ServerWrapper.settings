@@ -9,7 +9,7 @@
       <Value Profile="(Default)">2048</Value>
     </Setting>
     <Setting Name="ServerForceOnlineMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="RunServerOnStartUp" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -24,7 +24,7 @@
       <Value Profile="(Default)">Yellow</Value>
     </Setting>
     <Setting Name="ErrorOutputColor" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Red</Value>
+      <Value Profile="(Default)">255, 64, 64</Value>
     </Setting>
     <Setting Name="ShowWarningOutput" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -37,6 +37,12 @@
     </Setting>
     <Setting Name="BackgroundSkin" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PlayerEventOutputColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">150, 190, 255</Value>
+    </Setting>
+    <Setting Name="ServerLoadingDoneColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Lime</Value>
     </Setting>
   </Settings>
 </SettingsFile>

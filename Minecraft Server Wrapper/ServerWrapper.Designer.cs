@@ -49,7 +49,7 @@ namespace Minecraft_Server_Wrapper {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ServerForceOnlineMode {
             get {
                 return ((bool)(this["ServerForceOnlineMode"]));
@@ -109,7 +109,7 @@ namespace Minecraft_Server_Wrapper {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
+        [global::System.Configuration.DefaultSettingValueAttribute("255, 64, 64")]
         public global::System.Drawing.Color ErrorOutputColor {
             get {
                 return ((global::System.Drawing.Color)(this["ErrorOutputColor"]));
@@ -164,6 +164,30 @@ namespace Minecraft_Server_Wrapper {
             }
             set {
                 this["BackgroundSkin"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("150, 190, 255")]
+        public global::System.Drawing.Color PlayerEventOutputColor {
+            get {
+                return ((global::System.Drawing.Color)(this["PlayerEventOutputColor"]));
+            }
+            set {
+                this["PlayerEventOutputColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Lime")]
+        public global::System.Drawing.Color ServerLoadingDoneColor {
+            get {
+                return ((global::System.Drawing.Color)(this["ServerLoadingDoneColor"]));
+            }
+            set {
+                this["ServerLoadingDoneColor"] = value;
             }
         }
     }

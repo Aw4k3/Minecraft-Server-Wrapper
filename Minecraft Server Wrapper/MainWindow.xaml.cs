@@ -24,7 +24,8 @@ namespace Minecraft_Server_Wrapper
         ServerWrapper serverWrapper = new ServerWrapper();
         ServerPropertiesManager serverPropertiesManager = new ServerPropertiesManager();
         WrapperSettings wrapperSettings = new WrapperSettings();
-        FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
+        FileSystemWatcher ModsPluginsWatcher = new FileSystemWatcher();
+        FileSystemWatcher WorldsWatcher = new FileSystemWatcher();
 
         Color DefaultOutputColor;
         Color WarningOutputColor;
@@ -62,6 +63,7 @@ namespace Minecraft_Server_Wrapper
             ErrorOutputColor = Color.FromRgb(serverWrapper.ErrorOutputColor.R, serverWrapper.ErrorOutputColor.G, serverWrapper.ErrorOutputColor.B);
             PlayerEventOutputColor = Color.FromRgb(serverWrapper.PlayerEventOutputColor.R, serverWrapper.PlayerEventOutputColor.G, serverWrapper.PlayerEventOutputColor.B);
             ServerDoneLoadingColor = Color.FromRgb(serverWrapper.ServerLoadingDoneColor.R, serverWrapper.ServerLoadingDoneColor.G, serverWrapper.ServerLoadingDoneColor.B);
+            NotesRichTextBox.AppendText(serverWrapper.Notes);
 
             //Does server path exist and is auto start available
             if (File.Exists(ServerFilePath.Text))
@@ -89,12 +91,34 @@ namespace Minecraft_Server_Wrapper
             //Skinning [wip]
             UpdateSkin(0.95f, serverWrapper.BackgroundSkin);
 
-            fileSystemWatcher.Changed += ModsPlugins_OnChanged;
-            fileSystemWatcher.Created += ModsPlugins_OnChanged;
-            fileSystemWatcher.Deleted += ModsPlugins_OnChanged;
-            fileSystemWatcher.Renamed += ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Changed += ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Created += ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Deleted += ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Renamed += ModsPlugins_OnChanged;
 
-            fileSystemWatcher.EnableRaisingEvents = true;
+            ModsPluginsWatcher.EnableRaisingEvents = true;
+
+            WorldsWatcher.Changed += Worlds_OnChanged;
+            WorldsWatcher.Created += Worlds_OnChanged;
+            WorldsWatcher.Deleted += Worlds_OnChanged;
+            WorldsWatcher.Renamed += Worlds_OnChanged;
+
+            WorldsWatcher.EnableRaisingEvents = true;
+        }
+
+        private void Worlds_OnChanged(object sender, FileSystemEventArgs e)
+        {
+            Dispatcher.Invoke(() => {
+                WorldsTabListBox.Items.Clear();
+                foreach (var folder in Directory.EnumerateDirectories(WorkingDirectory.ToString()))
+                {
+                    if (File.Exists(folder + @"\level.dat"))
+                    {
+                        string[] temp = folder.Split('\\');
+                        WorldsTabListBox.Items.Add(temp[temp.Length - 1]);
+                    }
+                }
+            });
         }
 
         private void ModsPlugins_OnChanged(object sender, FileSystemEventArgs e)
@@ -153,10 +177,7 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
-        private void PublicIP_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            Clipboard.SetText(PublicIP.Content.ToString());
-        }
+        private void PublicIP_MouseUp(object sender, MouseButtonEventArgs e) => Clipboard.SetText(PublicIP.Content.ToString());
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
@@ -167,18 +188,15 @@ namespace Minecraft_Server_Wrapper
                 ServerProcess.Kill();
             }
 
-            fileSystemWatcher.Changed -= ModsPlugins_OnChanged;
-            fileSystemWatcher.Created -= ModsPlugins_OnChanged;
-            fileSystemWatcher.Deleted -= ModsPlugins_OnChanged;
-            fileSystemWatcher.Renamed -= ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Changed -= ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Created -= ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Deleted -= ModsPlugins_OnChanged;
+            ModsPluginsWatcher.Renamed -= ModsPlugins_OnChanged;
 
             Application.Current.Shutdown();
         }
 
-        private void Minimize_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
+        private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -193,10 +211,7 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
-        private void WrapperSettings_Click(object sender, RoutedEventArgs e)
-        {
-            new WrapperSettings().Show();
-        }
+        private void WrapperSettings_Click(object sender, RoutedEventArgs e) => new WrapperSettings().Show();
 
         private void StatusLightColor(int x)
         {
@@ -206,10 +221,7 @@ namespace Minecraft_Server_Wrapper
         }
 
         private static readonly Regex _regex = new Regex("[^0-9]+"); //regex that matches disallowed text
-        private static bool IsTextAllowed(string text)
-        {
-            return !_regex.IsMatch(text);
-        }
+        private static bool IsTextAllowed(string text) => !_regex.IsMatch(text);
 
         DirectoryInfo WorkingDirectory;
         private void ServerCheck(string changedValue)
@@ -255,6 +267,16 @@ namespace Minecraft_Server_Wrapper
                     if (changedValue == "ServerPath")
                     {
                         WorkingDirectory = new DirectoryInfo(Path.GetDirectoryName(ServerFilePath.Text));
+                        WorldsTabListBox.Items.Clear();
+                        WorldsWatcher.Path = WorkingDirectory.ToString();
+                        foreach (var folder in Directory.EnumerateDirectories(WorkingDirectory.ToString()))
+                        {
+                            if (File.Exists(folder + @"\level.dat"))
+                            {
+                                string[] temp = folder.Split('\\');
+                                WorldsTabListBox.Items.Add(temp[temp.Length - 1]);
+                            }
+                        }
                         StatusIndicator.Content = "Server path changed";
                         ShowInExplorer.IsEnabled = true;
                         BackupWorld.IsEnabled = true;
@@ -274,7 +296,7 @@ namespace Minecraft_Server_Wrapper
                         if (Directory.Exists(WorkingDirectory + @"\plugins"))
                         {
                             ModPluginsTabItem.Header = "Plugins";
-                            fileSystemWatcher.Path = WorkingDirectory + @"\plugins";
+                            ModsPluginsWatcher.Path = WorkingDirectory + @"\plugins";
                             string[] _Plugins = Directory.GetFiles(WorkingDirectory + @"\plugins");
                             foreach (var item in _Plugins)
                             {
@@ -285,7 +307,7 @@ namespace Minecraft_Server_Wrapper
                         if (Directory.Exists(WorkingDirectory + @"\mods"))
                         {
                             ModPluginsTabItem.Header = "Mods";
-                            fileSystemWatcher.Path = WorkingDirectory + @"\mods";
+                            ModsPluginsWatcher.Path = WorkingDirectory + @"\mods";
                             string[] _Mods = Directory.GetFiles(WorkingDirectory + @"\mods");
                             foreach (var item in _Mods)
                             {
@@ -336,15 +358,9 @@ namespace Minecraft_Server_Wrapper
         bool ServerIsRunning = false;
 
         //Auto Start Server Settings
-        private void RunServerOnStartUp_Checked(object sender, RoutedEventArgs e)
-        {
-            serverWrapper.RunServerOnStartUp = true;
-        }
+        private void RunServerOnStartUp_Checked(object sender, RoutedEventArgs e) => serverWrapper.RunServerOnStartUp = true;
 
-        private void RunServerOnStartUp_Unchecked(object sender, RoutedEventArgs e)
-        {
-            serverWrapper.RunServerOnStartUp = false;
-        }
+        private void RunServerOnStartUp_Unchecked(object sender, RoutedEventArgs e) => serverWrapper.RunServerOnStartUp = false;
 
         //Managing Server Path
         private void BrowseServerFile_Click(object sender, RoutedEventArgs e)
@@ -363,16 +379,10 @@ namespace Minecraft_Server_Wrapper
         }
 
         //Make new Server
-        private void CreateNewServer_Click(object sender, RoutedEventArgs e)
-        {
-            new CreateNewServer().Show();
-        }
+        private void CreateNewServer_Click(object sender, RoutedEventArgs e) => new CreateNewServer().Show();
 
         //Setting Server Path
-        private void ServerFilePath_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            ServerCheck("ServerPath");
-        }
+        private void ServerFilePath_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => ServerCheck("ServerPath");
 
         private void ServerFilePath_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -384,10 +394,7 @@ namespace Minecraft_Server_Wrapper
         }
 
         //Run Server Settings
-        private void StartStopServerSettings_Click(object sender, RoutedEventArgs e)
-        {
-            new ServerStartSettings().Show();
-        }
+        private void StartStopServerSettings_Click(object sender, RoutedEventArgs e) => new ServerStartSettings().Show();
 
         //Managing Server Mods/Plugins
         private void PluginsModItemDelete_Click(object sender, RoutedEventArgs e)
@@ -414,11 +421,44 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
-        //Managing Server Memory
-        private void ramLimit_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        //World Tab Options
+        private async void Worlds_Action(object sender, RoutedEventArgs e)
         {
-            ServerCheck("ramLimit");
+            if (sender == Worlds_Backup)
+            {
+                //Check backups directory exists
+                if (!Directory.Exists(WorkingDirectory + @"\Backups"))
+                {
+                    Directory.CreateDirectory(WorkingDirectory + @"\Backups");
+                }
+
+                //Create Folder to hold backups of current time
+                string DestinationFolder = WorkingDirectory + "\\Backups\\" + DateTime.Now.ToString("dd-mm-yyyy-_-HH-mm-ss");
+                Directory.CreateDirectory(DestinationFolder);
+
+                //Find all world folders
+                await Task.Run(() => {
+                    Dispatcher.Invoke(() =>
+                    {
+                        string[] WorldName = WorldsTabListBox.SelectedItem.ToString().Split('\\');
+                        Directory.CreateDirectory(DestinationFolder + "\\" + WorldName[WorldName.Length - 1]);
+                        ServerOutputWindow.AppendText("\n[Server Wrapper] Backing up world \"" + WorldName[WorldName.Length - 1] + "\"");
+                        try
+                        {
+                            DirectoryCopy(WorkingDirectory + "\\" + WorldsTabListBox.SelectedItem.ToString(), DestinationFolder + "\\" + WorldName[WorldName.Length - 1], true);
+                        }
+                        catch (Exception f)
+                        {
+                            ServerOutputWindow.AppendText(f.ToString());
+                        }
+                        ServerOutputWindow.AppendText("\n[Server Wrapper] Finished backing up world \"" + WorldName[WorldName.Length - 1] + "\"");
+                    });
+                });
+            }
         }
+
+        //Managing Server Memory
+        private void ramLimit_TextChanged(object sender, TextChangedEventArgs e) => ServerCheck("ramLimit");
 
         private void ramLimit_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -521,7 +561,7 @@ namespace Minecraft_Server_Wrapper
             string DestinationFolder = WorkingDirectory + "\\Backups\\" + DateTime.Now.ToString("dd-mm-yyyy-_-HH-mm-ss");
             Directory.CreateDirectory(DestinationFolder);
 
-            //Find all world folders
+            //Find all world folders and copy
             await Task.Run(() => {
                 foreach (var item in Directory.EnumerateDirectories(WorkingDirectory.ToString()))
                 {
@@ -530,7 +570,14 @@ namespace Minecraft_Server_Wrapper
                         string[] WorldName = item.Split('\\');
                         Directory.CreateDirectory(DestinationFolder + "\\" + WorldName[WorldName.Length - 1]);
                         Dispatcher.Invoke(() => { ServerOutputWindow.AppendText("\n[Server Wrapper] Backing up world \"" + WorldName[WorldName.Length - 1] + "\""); });
-                        DirectoryCopy(item, DestinationFolder + "\\" + WorldName[WorldName.Length - 1], true);
+                        try
+                        {
+                            DirectoryCopy(item, DestinationFolder + "\\" + WorldName[WorldName.Length - 1], true);
+                        }
+                        catch (Exception f)
+                        {
+                            ServerOutputWindow.AppendText(f.ToString());
+                        }
                         Dispatcher.Invoke(() => { ServerOutputWindow.AppendText("\n[Server Wrapper] Finished backing up world \"" + WorldName[WorldName.Length - 1] + "\""); });
                     }
                 }
@@ -588,7 +635,7 @@ namespace Minecraft_Server_Wrapper
         //RAM and CPU usage and Server Uptime
         private void UpdateCpuRamUsageTimer(bool StartTimer)
         {
-            Timer timer = new Timer();
+            Timer timer = new Timer(); //For updating RAM and CPU usage
             timer.Interval = 100;
             timer.AutoReset = true;
             timer.Elapsed += new ElapsedEventHandler(UpdateCpuRamUsage_ElapsedEventHandler);
@@ -609,6 +656,8 @@ namespace Minecraft_Server_Wrapper
                 UpTimeTick.Stop();
                 ServerUptime.Stop();
                 ServerUptime.Reset();
+
+                ramUsageValue.Content = "RAM Usage: ----MB";
             }
         }
 
@@ -616,9 +665,7 @@ namespace Minecraft_Server_Wrapper
         {
             if (ServerIsRunning)
             {
-                Dispatcher.Invoke(() => {
-                    StatusIndicator.Content = "Server is Running | Server Process ID: " + ServerProcess.Id + " | Server Uptime: " + ServerUptime.Elapsed.ToString("hh\\:mm\\:ss");
-                });
+                Dispatcher.Invoke(() => { StatusIndicator.Content = "Server is Running | Server Process ID: " + ServerProcess.Id + " | Server Uptime: " + ServerUptime.Elapsed.ToString("hh\\:mm\\:ss"); });
             }
         }
 
@@ -626,9 +673,13 @@ namespace Minecraft_Server_Wrapper
         {
             if (ServerIsRunning)
             {
-                Dispatcher.Invoke(() =>
-                {
-                    ramUsageValue.Content = "RAM Usage: " + ServerProcess.WorkingSet64 / (1024 * 1024) + "MB";
+                Dispatcher.Invoke(() => {
+                    ServerProcess.Refresh();
+                    long RamUsedMB = ServerProcess.WorkingSet64 / (1024 * 1024);
+                    if (RamUsedMB / int.Parse(ramLimit.Text) >= 0.9) { ramUsageValue.Foreground = new SolidColorBrush(Colors.Red); }
+                    else if (RamUsedMB / int.Parse(ramLimit.Text) < 0.9 && RamUsedMB / int.Parse(ramLimit.Text) >= 0.7) { ramUsageValue.Foreground = new SolidColorBrush(Colors.Yellow); }
+                    else { ramUsageValue.Foreground = new SolidColorBrush(Colors.White); }
+                    ramUsageValue.Content = "RAM Usage: " + RamUsedMB + "MB";
                 });
             }
         }
@@ -791,19 +842,6 @@ namespace Minecraft_Server_Wrapper
         }
 
         //Commands
-        string[] CommandHistory;
-        int CommandHistoryIndex = 0; //Index of last stored command
-        int CommandToGetIndex;
-
-        private void UpdateCommandHistory()
-        {
-            if (CommandBox.Text != CommandHistory[CommandHistoryIndex])
-            {
-                CommandHistory[CommandHistoryIndex] = CommandBox.Text;
-                CommandToGetIndex = CommandHistory.Length;
-            }
-        }
-
         private void SendCommand_Click(object sender, RoutedEventArgs e)
         {
             string[] CommandsToSend = CommandBox.Text.Split(Convert.ToChar(";"));
@@ -824,6 +862,8 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
+
+        int CommandHistoryOffset = 0;
         private void CommandBox_KeyDown(object sender, KeyEventArgs e)
         {
             //Show command hints
@@ -842,23 +882,20 @@ namespace Minecraft_Server_Wrapper
                     CommandHistoryListBox.Items.Add(item.Trim());
                 }
                 CommandBox.Clear();
-                //UpdateCommandHistory();
+            }
+            /*
+            if (e.Key == Key.Up) //Cycle through command history backwards
+            {
+                CommandBox.Text = CommandHistoryListBox.Items.GetItemAt(CommandHistoryListBox.Items.Count - 1 - CommandHistoryOffset).ToString();
             }
 
-            //Cycle through command history backwards
-            if (e.Key == Key.Up && CommandToGetIndex <= CommandHistory.Length)
-            {/*
-                CommandBox.Text = CommandHistory[CommandToGetIndex];
-                CommandToGetIndex--;*/
-            }
+            if (e.Key == Key.Down) //Cycle through command history forwards
+            { 
 
-            //Cycle through command history forwards
-            if (e.Key == Key.Down && CommandToGetIndex >= CommandHistory.Length)
-            {/*
-                CommandBox.Text = CommandHistory[CommandToGetIndex];
-                CommandToGetIndex++;*/
-            }
+            }*/
         }
+
+        private void CommandBox_LostFocus(object sender, RoutedEventArgs e) => CommandHistoryOffset = 0;
 
         private void QuickCommand(object sender, RoutedEventArgs e)
         {
@@ -902,30 +939,28 @@ namespace Minecraft_Server_Wrapper
 
         private void ServerOutputWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            /*while (Keyboard.Modifiers == ModifierKeys.Control)
-            {
-                double scale = Convert.ToDouble(Regex.Replace(ServeroutputWindowScale.Text, "[^0-9]", ""));
-                if (e.Delta > 0)
+            while (Keyboard.Modifiers == ModifierKeys.Control)
+            {/*
+                //100% scale = font size 12
+                //double scale = Convert.ToDouble(Regex.Replace(ServeroutputWindowScale.Text, "[^0-9]", ""));
+                if (e.Delta > 0) //Scale Up
                 {
-                    scale += 5;
-                    ServeroutputWindowScale.Text = scale + "%";
-                    ServerOutputWindow.FontSize = (scale / 100) * 12;
+                    ServerOutputWindow.FontSize += 1;
+                    ServeroutputWindowScale.Text = (ServerOutputWindow.FontSize / 12) * 100 + "%";
                 }
-                if (e.Delta < 0)
+                if (e.Delta < 0) //Scale Down
                 {
-                    scale -= 5;
-                    if (scale < 1)
+                    if (ServerOutputWindow.FontSize - 1 < 1)
                     {
-                        scale = 1;
+                        ServerOutputWindow.FontSize = 1;
                     }
                     else
                     {
-                        
+                        ServerOutputWindow.FontSize -= 1;
                     }
-                    ServerOutputWindow.FontSize = (scale / 100) * 12;
-                    ServeroutputWindowScale.Text = scale + "%";
-                }
-            }*/
+                    ServeroutputWindowScale.Text = (ServerOutputWindow.FontSize / 12) * 100 + "%";
+                }*/
+            }
         }
 
         private void CommandHistory_Execute_Click(object sender, RoutedEventArgs e)
@@ -947,5 +982,75 @@ namespace Minecraft_Server_Wrapper
         {
             CommandHistoryListBox.Items.Remove(CommandHistoryListBox.SelectedItem);
         }
+
+        //Notes Panel
+        private void Notes_Import_Click(object sender, RoutedEventArgs e)
+        {
+            WinForms.OpenFileDialog BrowseTextFile = new WinForms.OpenFileDialog();
+            BrowseTextFile.Filter = ".txt|*.txt";
+
+            if (BrowseTextFile.ShowDialog() == WinForms.DialogResult.OK)
+            {
+                NotesRichTextBox.Document.Blocks.Clear();
+                NotesRichTextBox.AppendText(File.ReadAllText(BrowseTextFile.FileName));
+            }
+        }
+
+        private void Notes_AppendFromTxt_Click(object sender, RoutedEventArgs e)
+        {
+            WinForms.OpenFileDialog BrowseTextFile = new WinForms.OpenFileDialog();
+            BrowseTextFile.Filter = ".txt|*.txt";
+
+            if (BrowseTextFile.ShowDialog() == WinForms.DialogResult.OK)
+            {
+                NotesRichTextBox.AppendText(File.ReadAllText(BrowseTextFile.FileName));
+            }
+        }   
+
+        private void Notes_Export_Click(object sender, RoutedEventArgs e)
+        {/*
+            WinForms.SaveFileDialog ExportNotes = new WinForms.SaveFileDialog();
+            ExportNotes.Filter = "Text File (.txt)|*.txt|All Files|*.*";
+            ExportNotes.Title = "Export notes to text file";
+
+            if (ExportNotes.ShowDialog() == WinForms.DialogResult.OK && ExportNotes.FileName != null)
+            {
+                File.Create(ExportNotes.FileName);
+                File.WriteAllText(ExportNotes.FileName, NotesTextBlock.Text);
+            }*/
+        }
+
+        private void Notes_ExportToTxt_Click(object sender, RoutedEventArgs e)
+        {
+            WinForms.OpenFileDialog BrowseTextFile = new WinForms.OpenFileDialog();
+            BrowseTextFile.Filter = ".txt|*.txt";
+
+            if (BrowseTextFile.ShowDialog() == WinForms.DialogResult.OK)
+            {
+                File.AppendText(BrowseTextFile.FileName);
+            }
+        }
+
+        private void NotesScale_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (NotesScale.Text != "" && NotesScale.Text != "%")
+            {
+                double scale = Convert.ToDouble(Regex.Replace(NotesScale.Text, "[^0-9]", "")); //Remove any non numeric characters from scale to use in code
+                if (scale >= 1)
+                {
+                    NotesRichTextBox.FontSize = (scale / 100) * 24;
+                }
+            }
+        }
+
+        private void NotesScale_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (NotesScale.Text[NotesScale.Text.Length - 1] != '%')
+            {
+                NotesScale.Text += "%";
+            }
+        }
+
+        private void NotesRichTextBox_TextChanged(object sender, TextChangedEventArgs e) => serverWrapper.Notes = new TextRange(NotesRichTextBox.Document.ContentStart, NotesRichTextBox.Document.ContentEnd).Text;
     }
 }

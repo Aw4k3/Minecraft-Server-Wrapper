@@ -19,15 +19,9 @@ namespace Minecraft_Server_Wrapper
             InitializeComponent();
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Hide();
-        }
+        private void Exit_Click(object sender, RoutedEventArgs e) => Hide();
 
-        private void Minimize_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
+        private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -78,14 +72,8 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            AutoStartTimeBased = true;
-        }
+        private void CheckBox_Checked(object sender, RoutedEventArgs e) => AutoStartTimeBased = true;
 
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            AutoStartTimeBased = false;
-        }
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e) => AutoStartTimeBased = false;
     }
 }

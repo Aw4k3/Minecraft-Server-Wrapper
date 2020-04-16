@@ -44,5 +44,8 @@
     <Setting Name="ServerLoadingDoneColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">Lime</Value>
     </Setting>
+    <Setting Name="Notes" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

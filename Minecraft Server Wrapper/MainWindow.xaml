@@ -285,7 +285,7 @@
 
         <Border x:Name="LargeInfoPanelBorder" Margin="10,75,0,0" Height="567" Width="625" Background="#F2202020" CornerRadius="8" Opacity="0.95" HorizontalAlignment="Left" VerticalAlignment="Top">
             <TabControl x:Name="LargeInfoPanel" HorizontalAlignment="Left" Height="567" VerticalAlignment="Top" Width="625" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0">
-                <TabItem x:Name="Console" Header="Console" Foreground="White" Background="{x:Null}" Width="310">
+                <TabItem x:Name="Console" Header="Console" Foreground="White" Background="{x:Null}" Width="207">
                     <Grid>
                         <RichTextBox x:Name="ServerOutputWindow" HorizontalAlignment="Left" Height="537" VerticalAlignment="Top" Width="623" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" IsReadOnly="True" FontSize="12" MouseWheel="ServerOutputWindow_MouseWheel" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="2,3">
                             <FlowDocument>
@@ -295,7 +295,7 @@
                         <TextBox x:Name="ServeroutputWindowScale" HorizontalAlignment="Left" Height="16" Margin="585,0,-327,0" Text="100%" VerticalAlignment="Top" Width="40" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="ServeroutputWindowScale_TextChanged" FontSize="12" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="ServeroutputWindowScale_LostFocus"/>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="CommandsHistoryPanel" Header="Command History" Foreground="White" Background="{x:Null}" Width="310">
+                <TabItem x:Name="CommandsHistoryPanel" Header="Command History" Foreground="White" Background="{x:Null}" Width="207">
                     <ListBox x:Name="CommandHistoryListBox" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="537" VerticalAlignment="Top" Width="623" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
                         <ListBox.ContextMenu>
                             <ContextMenu>
@@ -307,19 +307,55 @@
                         </ListBox.ContextMenu>
                     </ListBox>
                 </TabItem>
+                <TabItem x:Name="NotesPanel" Header="Notes" Foreground="White" Background="{x:Null}" Width="207">
+                    <Border Height="539" Width="623" VerticalAlignment="Top" HorizontalAlignment="Left" CornerRadius="0,0,8,8">
+                        <Grid>
+                            <RichTextBox x:Name="NotesRichTextBox" HorizontalAlignment="Left" Height="514" VerticalAlignment="Top" Width="623" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" FontSize="24" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="2,3" TextChanged="NotesRichTextBox_TextChanged">
+                                <FlowDocument>
+                                    <Paragraph/>
+                                </FlowDocument>
+                            </RichTextBox>
+                            <TextBox x:Name="NotesScale" HorizontalAlignment="Left" Height="16" Margin="585,0,-327,0" Text="100%" VerticalAlignment="Top" Width="40" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="NotesScale_TextChanged" FontSize="12" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="NotesScale_LostFocus"/>
+                            <Button x:Name="Notes_Import" Height="25" Width="156" Content="Import from text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" FontSize="15" VerticalContentAlignment="Center" Click="Notes_Import_Click"/>
+                            <Button x:Name="Notes_AppendFromTxt" Height="25" Width="156" Content="Append from text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="156,0,0,0" FontSize="15" VerticalContentAlignment="Center" Click="Notes_AppendFromTxt_Click"/>
+                            <Button x:Name="Notes_Export" Height="25" Width="155" Content="Export to text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="312,0,0,0" FontSize="15" VerticalContentAlignment="Center" Click="Notes_Export_Click"/>
+                            <Button x:Name="Notes_ExportToTxt" Height="25" Width="156" Content="Append to text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="467,0,0,0" FontSize="15" VerticalContentAlignment="Center" Click="Notes_ExportToTxt_Click"/>
+                        </Grid>
+                    </Border>
+                </TabItem>
             </TabControl>
         </Border>
         <Border x:Name="InfoPanelBorder" Margin="645,75,335,78" Height="567" Width="300" Background="#F2202020" CornerRadius="8" Opacity="0.95">
             <TabControl x:Name="InfoPanel" HorizontalAlignment="Left" Height="567" VerticalAlignment="Top" Width="300" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0">
-                <TabItem x:Name="PlayerTabItem" Header="Players" Foreground="White" Background="{x:Null}" Width="148">
-                    <ListBox x:Name="PlayerListWindow" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White"/>
+                <TabItem x:Name="PlayerTabItem" Header="Players" Foreground="White" Background="{x:Null}" Width="98">
+                    <ListBox x:Name="PlayerListWindow" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Op"/>
+                                <MenuItem Header="De-Op"/>
+                                <MenuItem Header="Kick"/>
+                                <MenuItem Header="Ban"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
                 </TabItem>
-                <TabItem x:Name="ModPluginsTabItem" Header="Plugins/Mods" Foreground="White" Background="{x:Null}" Width="148">
+                <TabItem x:Name="ModPluginsTabItem" Header="Plugins/Mods" Foreground="White" Background="{x:Null}" Width="98">
                     <ListBox x:Name="ModPluginWindow" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
                         <ListBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Delete" Click="PluginsModItemDelete_Click"/>
                                 <MenuItem Header="Open File Location" Click="PluginsModItemOpenFileLocation_Click"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
+                </TabItem>
+                <TabItem x:Name="WorldsTab" Header="Worlds" Foreground="White" Background="{x:Null}" Width="98">
+                    <ListBox x:Name="WorldsTabListBox" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem x:Name="Worlds_Backup" Header="Backup" Click="Worlds_Action"/>
+                                <MenuItem x:Name="Worlds_OpenInExplorer" Header="Open Folder in Explorer" Click="Worlds_Action"/>
+                                <MenuItem x:Name="Worlds_Delete" Header="Delete" Click="Worlds_Action"/>
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
@@ -349,7 +385,7 @@
         <Button x:Name="BackupWorld" Content="Backup Server World(s)" HorizontalAlignment="Left" Height="35" Margin="951,560,0,0" VerticalAlignment="Top" Width="316" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="BackupWorld_Click" Background="{x:Null}"/>
         <Button x:Name="ShowInExplorer" Content="Open Server Location" HorizontalAlignment="Left" Height="35" Margin="951,607,0,0" VerticalAlignment="Top" Width="316" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="ShowInExplorer_Click" Background="{x:Null}"/>
 
-        <TextBox x:Name="CommandBox" HorizontalAlignment="Left" Height="35" Margin="10,654,0,0" TextWrapping="Wrap" Text="/" VerticalAlignment="Top" Width="1145" Foreground="White" Background="#F2202020" BorderBrush="{x:Null}" KeyDown="CommandBox_KeyDown" MouseWheel="CommandBox_MouseWheel"/>
+        <TextBox x:Name="CommandBox" HorizontalAlignment="Left" Height="35" Margin="10,654,0,0" TextWrapping="Wrap" Text="/" VerticalAlignment="Top" Width="1145" Foreground="White" Background="#F2202020" BorderBrush="{x:Null}" KeyDown="CommandBox_KeyDown" MouseWheel="CommandBox_MouseWheel" LostFocus="CommandBox_LostFocus"/>
         <Button x:Name="SendCommand" Content="Execute" HorizontalAlignment="Left" Height="35" Margin="1160,654,0,0" VerticalAlignment="Top" Width="110" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="SendCommand_Click" ToolTip="Chain commands by using a &quot;;&quot; (i.e command 1;command  2)" Background="{x:Null}"/>
 
         <Ellipse x:Name="StatusLight" Fill="#FFFF8000" HorizontalAlignment="Left" Height="17" Margin="4,698,0,0" Stroke="Black" VerticalAlignment="Top" Width="17"/>

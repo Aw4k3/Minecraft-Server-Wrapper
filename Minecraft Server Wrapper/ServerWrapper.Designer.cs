@@ -190,5 +190,17 @@ namespace Minecraft_Server_Wrapper {
                 this["ServerLoadingDoneColor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Notes {
+            get {
+                return ((string)(this["Notes"]));
+            }
+            set {
+                this["Notes"] = value;
+            }
+        }
     }
 }

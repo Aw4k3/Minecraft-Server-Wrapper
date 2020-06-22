@@ -45,7 +45,7 @@
                                         <ColorAnimation To="Lime" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
                                         <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
                                         <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                        <ThicknessAnimation To="340,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
+                                        <ThicknessAnimation To="0,0,4,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
@@ -55,7 +55,7 @@
                                         <ColorAnimation To="DarkRed" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
                                         <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
                                         <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                        <ThicknessAnimation To="400,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
+                                        <ThicknessAnimation To="0,0,34,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
@@ -77,17 +77,17 @@
         <Rectangle x:Name="TitleBarColor" Fill="#FF323280" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,28,10,341" Height="30" MouseUp="TitleBarColor_MouseUp" Cursor="Hand"/>
         <CheckBox x:Name="ShowWarningOutput" Content="Warning Output" HorizontalAlignment="Left" Height="37" Margin="10,67,0,0" VerticalAlignment="Top" Width="430" Foreground="White" FontSize="24" Checked="ShowWarningOutput_Checked" Unchecked="ShowWarningOutput_Unchecked" IsChecked="True"/>
         <CheckBox x:Name="ShowErrorOutput" Content="Error Output" HorizontalAlignment="Left" Height="37" Margin="10,109,0,0" VerticalAlignment="Top" Width="430" Foreground="White" FontSize="24" Checked="ShowErrorOutput_Checked" Unchecked="ShowErrorOutput_Unchecked" IsChecked="True"/>
-        <Label Content="Default Output Color" HorizontalAlignment="Left" Height="37" Margin="10,151,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Label Content="Default Output Color" HorizontalAlignment="Left" Height="37" Margin="10,151,0,0" VerticalAlignment="Top" Width="289" Foreground="White" FontSize="24"/>
         <Rectangle x:Name="DefaultOutputColor" Fill="White" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,154,10,215" Height="30" MouseUp="DefaultOutputColor_MouseUp" Cursor="Hand"/>
-        <Label x:Name="WarningOutputColorLabel" Content="Warning Output Color" HorizontalAlignment="Left" Height="37" Margin="10,193,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Label x:Name="WarningOutputColorLabel" Content="Warning Output Color" HorizontalAlignment="Left" Height="37" Margin="10,193,0,0" VerticalAlignment="Top" Width="289" Foreground="White" FontSize="24"/>
         <Rectangle x:Name="WarningOutputColor" Fill="Yellow" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,197,10,173" Height="30" MouseUp="WarningOutputColor_MouseUp" Cursor="Hand"/>
-        <Label x:Name="ErrorOutputColorLabel" Content="Error Output Color" HorizontalAlignment="Left" Height="37" Margin="10,235,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Label x:Name="ErrorOutputColorLabel" Content="Error Output Color" HorizontalAlignment="Left" Height="37" Margin="10,235,0,0" VerticalAlignment="Top" Width="289" Foreground="White" FontSize="24"/>
         <Rectangle x:Name="ErrorOutputColor" Fill="#FFFF4040" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,238,10,132" Height="30" MouseUp="ErrorOutputColor_MouseUp" Cursor="Hand"/>
-        <Label x:Name="ErrorOutputColorLabel_Copy" Content="Player Event Output Color" HorizontalAlignment="Left" Height="37" Margin="10,277,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Label x:Name="ErrorOutputColorLabel_Copy" Content="Player Event Output Color" HorizontalAlignment="Left" Height="37" Margin="10,277,0,0" VerticalAlignment="Top" Width="289" Foreground="White" FontSize="24"/>
         <Rectangle x:Name="ErrorOutputColor_Copy" Fill="#FF96BEFF" Stroke="Gray" StrokeThickness="1" RadiusX="5" RadiusY="5" Margin="374,281,10,89" Height="30" MouseUp="ErrorOutputColor_MouseUp" Cursor="Hand"/>
-        <Label Content="Foreground Opacity (%)" HorizontalAlignment="Left" Height="37" Margin="10,319,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Label Content="Foreground Opacity (%)" HorizontalAlignment="Left" Height="37" Margin="10,319,0,0" VerticalAlignment="Top" Width="289" Foreground="White" FontSize="24"/>
         <TextBox x:Name="ForegroundOpacityValue" HorizontalAlignment="Left" Height="25" Margin="374,326,0,0" Text="95" VerticalAlignment="Top" Width="66" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" TextChanged="ForegroundOpacityValue_TextChanged"/>
-        <Label Content="Background Skin" HorizontalAlignment="Left" Height="37" Margin="10,361,0,0" VerticalAlignment="Top" Width="330" Foreground="White" FontSize="24"/>
+        <Label Content="Background Skin" HorizontalAlignment="Left" Height="37" Margin="10,361,0,0" VerticalAlignment="Top" Width="289" Foreground="White" FontSize="24"/>
         <Button x:Name="ChangeBackgroundSkin" Content="No Skin" HorizontalAlignment="Left" Height="37" Margin="300,361,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF0080FF" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Right" Style="{StaticResource SkinButton}" Click="ChangeBackgroundSkin_Click" Cursor="Hand" ToolTip="Shift Click to clear"/>
 
     </Grid>

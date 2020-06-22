@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("server%20links/forge.txt")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("scroll%20to%20bottom.png")]
 
 

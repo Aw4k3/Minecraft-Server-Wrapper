@@ -10,7 +10,7 @@
         <Style TargetType="{x:Type TextBox}" x:Key="ScalePercentage">
             <Style.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="8"/>
+                    <Setter Property="CornerRadius" Value="10"/>
                     <Setter Property="Padding" Value="3,1"/>
                 </Style>
             </Style.Resources>
@@ -74,6 +74,14 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="{x:Type Button}" x:Key="TabItemButton">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#FF0080FF"/>
+                    <Setter Property="Background" Value="#FF404040"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style TargetType="{x:Type ListBox}">
             <Style.Resources>
                 <Style TargetType="Border">
@@ -90,29 +98,7 @@
                                 <ContentPresenter ContentSource="Content"/>
                             </Label>
                             <Rectangle x:Name="ToggleSwitch" Width="60"  Height="30" Fill="#FF202020" RadiusX="15" RadiusY="15" HorizontalAlignment="Right"/>
-                            <Rectangle x:Name="Toggle" Width="22"  Height="22" Fill="DarkRed" RadiusX="11" RadiusY="11" Margin="227,0,0,0"/>
-                            <!--
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CheckBoxStates">
-                                    <VisualState x:Name="CheckBoxChecked">
-                                        <Storyboard>
-                                            <ColorAnimation To="Lime" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
-                                            <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                            <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                            <ThicknessAnimation To="227,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckBoxUnChecked">
-                                        <Storyboard>
-                                            <ColorAnimation To="DarkRed" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
-                                            <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                            <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                            <ThicknessAnimation To="286,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            -->
+                            <Rectangle x:Name="Toggle" Width="22"  Height="22" Fill="DarkRed" RadiusX="11" RadiusY="11" Margin="0,0,34,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
@@ -124,7 +110,7 @@
                                         <ColorAnimation To="Lime" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
                                         <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
                                         <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                        <ThicknessAnimation To="286,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
+                                        <ThicknessAnimation To="0,0,4,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
@@ -134,7 +120,7 @@
                                         <ColorAnimation To="DarkRed" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"/>
                                         <DoubleAnimation To="40" BeginTime="00:00:00.000" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
                                         <DoubleAnimation To="22" BeginTime="00:00:00.100" Duration="00:00:00.100" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="(Rectangle.Width)"/>
-                                        <ThicknessAnimation To="227,0,0,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
+                                        <ThicknessAnimation To="0,0,34,0" Duration="00:00:00.200" Storyboard.TargetName="Toggle" Storyboard.TargetProperty="Margin"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
@@ -292,7 +278,14 @@
                                 <Paragraph/>
                             </FlowDocument>
                         </RichTextBox>
-                        <TextBox x:Name="ServeroutputWindowScale" HorizontalAlignment="Left" Height="16" Margin="585,0,-327,0" Text="100%" VerticalAlignment="Top" Width="40" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="ServeroutputWindowScale_TextChanged" FontSize="12" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="ServeroutputWindowScale_LostFocus"/>
+                        <TextBox x:Name="ServeroutputWindowScale" HorizontalAlignment="Left" Height="20" Margin="568,0,0,0" Text="100%" VerticalAlignment="Top" Width="45" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="ServeroutputWindowScale_TextChanged" FontSize="16" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="ServeroutputWindowScale_LostFocus"/>
+                        <Button x:Name="ServerOutputWindow_AutoScrollButton" Content="v" HorizontalAlignment="Left" Height="20" Margin="580,25,0,0" VerticalAlignment="Top" Width="20" BorderBrush="#FF282828" Click="ServerOutputWindow_AutoScrollButton_Click" Cursor="Hand" Background="#FF303030" FontSize="16" Foreground="White" Padding="0,-3" FontFamily="Bahnschrift Light">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="CommandsHistoryPanel" Header="Command History" Foreground="White" Background="{x:Null}" Width="207">
@@ -310,16 +303,16 @@
                 <TabItem x:Name="NotesPanel" Header="Notes" Foreground="White" Background="{x:Null}" Width="207">
                     <Border Height="539" Width="623" VerticalAlignment="Top" HorizontalAlignment="Left" CornerRadius="0,0,8,8">
                         <Grid>
-                            <RichTextBox x:Name="NotesRichTextBox" HorizontalAlignment="Left" Height="514" VerticalAlignment="Top" Width="623" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" FontSize="24" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="2,3" TextChanged="NotesRichTextBox_TextChanged">
+                            <RichTextBox x:Name="NotesRichTextBox" HorizontalAlignment="Left" Height="514" VerticalAlignment="Top" Width="623" Background="#F2202020" Foreground="White" BorderBrush="{x:Null}" FontSize="20" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="2,3" TextChanged="NotesRichTextBox_TextChanged">
                                 <FlowDocument>
                                     <Paragraph/>
                                 </FlowDocument>
                             </RichTextBox>
-                            <TextBox x:Name="NotesScale" HorizontalAlignment="Left" Height="16" Margin="585,0,-327,0" Text="100%" VerticalAlignment="Top" Width="40" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="NotesScale_TextChanged" FontSize="12" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="NotesScale_LostFocus"/>
-                            <Button x:Name="Notes_Import" Height="25" Width="156" Content="Import from text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" FontSize="15" VerticalContentAlignment="Center" Click="Notes_Import_Click"/>
-                            <Button x:Name="Notes_AppendFromTxt" Height="25" Width="156" Content="Append from text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="156,0,0,0" FontSize="15" VerticalContentAlignment="Center" Click="Notes_AppendFromTxt_Click"/>
-                            <Button x:Name="Notes_Export" Height="25" Width="155" Content="Export to text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="312,0,0,0" FontSize="15" VerticalContentAlignment="Center" Click="Notes_Export_Click"/>
-                            <Button x:Name="Notes_ExportToTxt" Height="25" Width="156" Content="Append to text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="467,0,0,0" FontSize="15" VerticalContentAlignment="Center" Click="Notes_ExportToTxt_Click"/>
+                            <TextBox x:Name="NotesScale" HorizontalAlignment="Left" Height="20" Margin="568,0,0,0" Text="100%" VerticalAlignment="Top" Width="45" HorizontalContentAlignment="Right" Style="{StaticResource ScalePercentage}" TextChanged="NotesScale_TextChanged" FontSize="16" Background="#FF303030" Foreground="White" BorderBrush="#FF282828" LostFocus="NotesScale_LostFocus"/>
+                            <Button x:Name="Notes_Import" Height="25" Width="156" Content="Import from text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" FontSize="15" VerticalContentAlignment="Center" Style="{StaticResource TabItemButton}" Click="Notes_Import_Click"/>
+                            <Button x:Name="Notes_AppendFromTxt" Height="25" Width="156" Content="Append from text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="156,0,0,0" FontSize="15" VerticalContentAlignment="Center" Style="{StaticResource TabItemButton}" Click="Notes_AppendFromTxt_Click"/>
+                            <Button x:Name="Notes_Export" Height="25" Width="155" Content="Export to text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="312,0,0,0" FontSize="15" VerticalContentAlignment="Center" Style="{StaticResource TabItemButton}" Click="Notes_Export_Click"/>
+                            <Button x:Name="Notes_ExportToTxt" Height="25" Width="156" Content="Append to text file" VerticalAlignment="Bottom" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" Foreground="White" Margin="467,0,0,0" FontSize="15" VerticalContentAlignment="Center" Style="{StaticResource TabItemButton}" Click="Notes_ExportToTxt_Click"/>
                         </Grid>
                     </Border>
                 </TabItem>
@@ -340,14 +333,18 @@
                     </ListBox>
                 </TabItem>
                 <TabItem x:Name="ModPluginsTabItem" Header="Plugins/Mods" Foreground="White" Background="{x:Null}" Width="98">
-                    <ListBox x:Name="ModPluginWindow" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Delete" Click="PluginsModItemDelete_Click"/>
-                                <MenuItem Header="Open File Location" Click="PluginsModItemOpenFileLocation_Click"/>
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                    </ListBox>
+                    <Grid>
+                        <Label Content="Count: " Foreground="AliceBlue" Margin="0,0,148,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="28" Padding="10,5"/>
+                        <Label x:Name="ModPluginCount" Content="--" Foreground="AliceBlue" Margin="148,0,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="28" HorizontalContentAlignment="Right" Padding="10,5"/>
+                        <ListBox x:Name="ModPluginWindow" HorizontalAlignment="Left" Margin="-1,28,-1,-1" Height="510" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Delete" Click="PluginsModItemDelete_Click"/>
+                                    <MenuItem Header="Open File Location" Click="PluginsModItemOpenFileLocation_Click"/>
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+                        </ListBox>
+                    </Grid>
                 </TabItem>
                 <TabItem x:Name="WorldsTab" Header="Worlds" Foreground="White" Background="{x:Null}" Width="98">
                     <ListBox x:Name="WorldsTabListBox" HorizontalAlignment="Left" Margin="-1,0,0,0" Height="538" VerticalAlignment="Top" Width="300" Background="#F2202020" BorderBrush="{x:Null}" Foreground="White">
@@ -366,7 +363,7 @@
         <TextBox x:Name="ramLimit" HorizontalAlignment="Left" Height="35" Margin="1160,75,0,0" Text="2048" VerticalAlignment="Top" Width="110" RenderTransformOrigin="-0.336,0.062" HorizontalContentAlignment="Right" TextChanged="ramLimit_TextChanged" MouseWheel="ramLimit_MouseWheel" ToolTip="Maximun RAM allowed to be used by the server"/>
         <CheckBox x:Name="ForceOnlineMode" Content="Force Online Mode........" HorizontalAlignment="Left" Height="36" Margin="951,116,0,0" VerticalAlignment="Top" Width="316" VerticalContentAlignment="Center" FontSize="24" Foreground="White" Checked="ForceOnlineMode_Checked" Unchecked="ForceOnlineMode_Unchecked" ToolTip="Start the server in online mode regardless of weather online mode is enabled or disabled in the server.properties file"/>
         <CheckBox x:Name="RunServerOnStartUp" Content="Run Server on Launch" HorizontalAlignment="Left" Height="36" Margin="951,157,0,0" VerticalAlignment="Top" Width="316" VerticalContentAlignment="Center" FontSize="24" Foreground="White" Checked="RunServerOnStartUp_Checked" Unchecked="RunServerOnStartUp_Unchecked" ToolTip="Run the server automatically on server wrapper start"/>
-        <Button x:Name="StartStopServer" Content="Start Server" HorizontalAlignment="Left" Height="35" Margin="951,201,0,0" VerticalAlignment="Top" Width="276" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" Click="StartStopServer_Click" Background="{x:Null}"/>
+        <Button x:Name="StartStopServer" Content="Start Server" HorizontalAlignment="Left" Height="35" Margin="951,201,0,0" VerticalAlignment="Top" Width="276" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" Click="StartStopServer_Click" Background="{x:Null}" ToolTip="Start server using default arguments"/>
         <Button x:Name="StartStopServerSettings" HorizontalAlignment="Left" Height="35" Margin="1232,201,0,0" VerticalAlignment="Top" Width="35" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" Click="StartStopServerSettings_Click">
             <Button.Background>
                 <ImageBrush ImageSource="Gear.png" Stretch="Uniform" AlignmentX="Center" AlignmentY="Center">
@@ -385,12 +382,12 @@
         <Button x:Name="BackupWorld" Content="Backup Server World(s)" HorizontalAlignment="Left" Height="35" Margin="951,560,0,0" VerticalAlignment="Top" Width="316" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="BackupWorld_Click" Background="{x:Null}"/>
         <Button x:Name="ShowInExplorer" Content="Open Server Location" HorizontalAlignment="Left" Height="35" Margin="951,607,0,0" VerticalAlignment="Top" Width="316" BorderBrush="White" Foreground="White" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="ShowInExplorer_Click" Background="{x:Null}"/>
 
-        <TextBox x:Name="CommandBox" HorizontalAlignment="Left" Height="35" Margin="10,654,0,0" TextWrapping="Wrap" Text="/" VerticalAlignment="Top" Width="1145" Foreground="White" Background="#F2202020" BorderBrush="{x:Null}" KeyDown="CommandBox_KeyDown" MouseWheel="CommandBox_MouseWheel" LostFocus="CommandBox_LostFocus"/>
+        <TextBox x:Name="CommandBox" HorizontalAlignment="Left" Height="35" Margin="10,654,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1145" Foreground="White" Background="#F2202020" BorderBrush="{x:Null}" KeyDown="CommandBox_KeyDown" MouseWheel="CommandBox_MouseWheel" LostFocus="CommandBox_LostFocus"/>
         <Button x:Name="SendCommand" Content="Execute" HorizontalAlignment="Left" Height="35" Margin="1160,654,0,0" VerticalAlignment="Top" Width="110" Foreground="White" BorderBrush="White" FontSize="20" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="SendCommand_Click" ToolTip="Chain commands by using a &quot;;&quot; (i.e command 1;command  2)" Background="{x:Null}"/>
 
         <Ellipse x:Name="StatusLight" Fill="#FFFF8000" HorizontalAlignment="Left" Height="17" Margin="4,698,0,0" Stroke="Black" VerticalAlignment="Top" Width="17"/>
-        <Label x:Name="StatusIndicator" Content="Server is not running" HorizontalAlignment="Left" Margin="21,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14" Width="776"/>
-        <Label x:Name="PublicIP" Content="---.---.---.---" HorizontalAlignment="Left" Margin="802,694,0,0" VerticalAlignment="Top" Foreground="#FF0098D1" Height="26" FontSize="14" Width="111" HorizontalContentAlignment="Right" MouseUp="PublicIP_MouseUp" Cursor="Hand"/>
+        <Label x:Name="StatusIndicator" Content="Server is not running" HorizontalAlignment="Left" Margin="21,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14" Width="716"/>
+        <Label x:Name="PublicIP" Content="---.---.---.---" HorizontalAlignment="Left" Margin="737,694,0,0" VerticalAlignment="Top" Foreground="#FF0098D1" Height="26" FontSize="14" Width="176" HorizontalContentAlignment="Right" MouseUp="PublicIP_MouseUp" Cursor="Hand"/>
 
         <Label Content="CPU Usage" HorizontalAlignment="Left" Margin="918,694,0,0" VerticalAlignment="Top" Foreground="White" Height="26" FontSize="14"/>
         <ProgressBar x:Name="cpuUsageBar" HorizontalAlignment="Left" Height="11" Margin="997,703,0,0" VerticalAlignment="Top" Width="100"/>

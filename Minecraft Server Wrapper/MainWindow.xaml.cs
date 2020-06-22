@@ -37,7 +37,7 @@ namespace Minecraft_Server_Wrapper
         {
             InitializeComponent();
 
-            PublicIP.Content = new WebClient().DownloadString(new Uri("http://ipinfo.io/ip"));
+            try { PublicIP.Content = new WebClient().DownloadString(new Uri("http://ipinfo.io/ip")); } catch { PublicIP.Content = "Unable to get IP"; }
 
             ramLimit.Text = serverWrapper.ServerRAM.ToString();
             ServerFilePath.Text = serverWrapper.ServerPath;
@@ -55,6 +55,7 @@ namespace Minecraft_Server_Wrapper
             }
             */
 
+            ServerOutputWindow_AutoScrollButton.Opacity = 0;
             TitleBar.Background = new SolidColorBrush(Color.FromRgb(serverWrapper.TitleBarColor.R, serverWrapper.TitleBarColor.G, serverWrapper.TitleBarColor.B));
             serverPropertiesManager.TitleBar.Background = new SolidColorBrush(Color.FromRgb(serverWrapper.TitleBarColor.R, serverWrapper.TitleBarColor.G, serverWrapper.TitleBarColor.B));
             wrapperSettings.TitleBar.Background = new SolidColorBrush(Color.FromRgb(serverWrapper.TitleBarColor.R, serverWrapper.TitleBarColor.G, serverWrapper.TitleBarColor.B));
@@ -96,14 +97,14 @@ namespace Minecraft_Server_Wrapper
             ModsPluginsWatcher.Deleted += ModsPlugins_OnChanged;
             ModsPluginsWatcher.Renamed += ModsPlugins_OnChanged;
 
-            ModsPluginsWatcher.EnableRaisingEvents = true;
+            //if (ModsPluginsWatcher.Path != null) { ModsPluginsWatcher.EnableRaisingEvents = true; }
 
             WorldsWatcher.Changed += Worlds_OnChanged;
             WorldsWatcher.Created += Worlds_OnChanged;
             WorldsWatcher.Deleted += Worlds_OnChanged;
             WorldsWatcher.Renamed += Worlds_OnChanged;
 
-            WorldsWatcher.EnableRaisingEvents = true;
+            //if (WorldsWatcher.Path != null) { WorldsWatcher.EnableRaisingEvents = true; }
         }
 
         private void Worlds_OnChanged(object sender, FileSystemEventArgs e)
@@ -177,7 +178,7 @@ namespace Minecraft_Server_Wrapper
             }
         }
 
-        private void PublicIP_MouseUp(object sender, MouseButtonEventArgs e) => Clipboard.SetText(PublicIP.Content.ToString());
+        private void PublicIP_MouseUp(object sender, MouseButtonEventArgs e) => Clipboard.SetText(PublicIP.Content.ToString(), TextDataFormat.UnicodeText);
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
@@ -266,9 +267,10 @@ namespace Minecraft_Server_Wrapper
                     ServerPathExistsTestPass = true;
                     if (changedValue == "ServerPath")
                     {
-                        WorkingDirectory = new DirectoryInfo(Path.GetDirectoryName(ServerFilePath.Text));
-                        WorldsTabListBox.Items.Clear();
-                        WorldsWatcher.Path = WorkingDirectory.ToString();
+                        WorkingDirectory = new DirectoryInfo(Path.GetDirectoryName(ServerFilePath.Text)); //Set Working Directory
+                        WorldsTabListBox.Items.Clear(); //Reset Worlds List
+                        WorldsWatcher.Path = WorkingDirectory.ToString(); //Set FileSystemWatcher Path
+                        if (!WorldsWatcher.EnableRaisingEvents) { WorldsWatcher.EnableRaisingEvents = true; } //Enable FileSystemWatcher if disabled
                         foreach (var folder in Directory.EnumerateDirectories(WorkingDirectory.ToString()))
                         {
                             if (File.Exists(folder + @"\level.dat"))
@@ -295,24 +297,24 @@ namespace Minecraft_Server_Wrapper
                         ModPluginWindow.Items.Clear();
                         if (Directory.Exists(WorkingDirectory + @"\plugins"))
                         {
-                            ModPluginsTabItem.Header = "Plugins";
-                            ModsPluginsWatcher.Path = WorkingDirectory + @"\plugins";
+                            ModPluginsTabItem.Header = "Plugins"; //Set Tab Header
+                            ModsPluginsWatcher.Path = WorkingDirectory + @"\plugins"; //Set FileSystemWatcher Path
+                            if (!ModsPluginsWatcher.EnableRaisingEvents) { ModsPluginsWatcher.EnableRaisingEvents = true; } //Enable FileSystemWatcher if disabled
                             string[] _Plugins = Directory.GetFiles(WorkingDirectory + @"\plugins");
-                            foreach (var item in _Plugins)
-                            {
-                                ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item));
-                            }
+                            int i = 0;
+                            foreach (var item in _Plugins) {ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item)); i++; }
+                            ModPluginCount.Content = i;
                         }
 
                         if (Directory.Exists(WorkingDirectory + @"\mods"))
                         {
-                            ModPluginsTabItem.Header = "Mods";
-                            ModsPluginsWatcher.Path = WorkingDirectory + @"\mods";
+                            ModPluginsTabItem.Header = "Mods"; //Set Tab Header
+                            ModsPluginsWatcher.Path = WorkingDirectory + @"\mods"; //Set FileSystemWatcher Path
+                            if (!ModsPluginsWatcher.EnableRaisingEvents) { ModsPluginsWatcher.EnableRaisingEvents = true; } //Enable FileSystemWatcher if disabled
                             string[] _Mods = Directory.GetFiles(WorkingDirectory + @"\mods");
-                            foreach (var item in _Mods)
-                            {
-                                ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item));
-                            }
+                            int i = 0;
+                            foreach (var item in _Mods) { ModPluginWindow.Items.Add(Path.GetFileNameWithoutExtension(item)); i++; }
+                            ModPluginCount.Content = i;
                         }
                     }
                 }
@@ -335,6 +337,7 @@ namespace Minecraft_Server_Wrapper
                     }
                 }
 
+                //Is server ready to start
                 if (ramLimitTestPass && ServerPathExistsTestPass)
                 {
                     StartStopServerSettings.IsEnabled = true;
@@ -424,6 +427,7 @@ namespace Minecraft_Server_Wrapper
         //World Tab Options
         private async void Worlds_Action(object sender, RoutedEventArgs e)
         {
+            //Backup Specific World
             if (sender == Worlds_Backup)
             {
                 //Check backups directory exists
@@ -433,28 +437,34 @@ namespace Minecraft_Server_Wrapper
                 }
 
                 //Create Folder to hold backups of current time
-                string DestinationFolder = WorkingDirectory + "\\Backups\\" + DateTime.Now.ToString("dd-mm-yyyy-_-HH-mm-ss");
+                string DestinationFolder = WorkingDirectory + "\\Backups\\" + DateTime.Now.ToString("dd-mmmm-yyyy-_-HH-mm-ss");
                 Directory.CreateDirectory(DestinationFolder);
 
                 //Find all world folders
                 await Task.Run(() => {
                     Dispatcher.Invoke(() =>
                     {
-                        string[] WorldName = WorldsTabListBox.SelectedItem.ToString().Split('\\');
-                        Directory.CreateDirectory(DestinationFolder + "\\" + WorldName[WorldName.Length - 1]);
-                        ServerOutputWindow.AppendText("\n[Server Wrapper] Backing up world \"" + WorldName[WorldName.Length - 1] + "\"");
+                        Directory.CreateDirectory(DestinationFolder + "\\" + WorldsTabListBox.SelectedItem.ToString());
+                        ServerOutputWindow.AppendText("\n[Server Wrapper] Backing up world \"" + WorldsTabListBox.SelectedItem.ToString() + "\"");
                         try
                         {
-                            DirectoryCopy(WorkingDirectory + "\\" + WorldsTabListBox.SelectedItem.ToString(), DestinationFolder + "\\" + WorldName[WorldName.Length - 1], true);
+                            DirectoryCopy(WorkingDirectory + "\\" + WorldsTabListBox.SelectedItem.ToString(), DestinationFolder + "\\" + WorldsTabListBox.SelectedItem.ToString(), true);
+                            ServerOutputWindow.AppendText("\n[Server Wrapper] Finished backing up world \"" + WorldsTabListBox.SelectedItem.ToString() + "\"");
                         }
                         catch (Exception f)
                         {
                             ServerOutputWindow.AppendText(f.ToString());
+                            ServerOutputWindow.AppendText("\n[Server Wrapper] Failed to backup world \"" + WorldsTabListBox.SelectedItem.ToString() + "\"");
                         }
-                        ServerOutputWindow.AppendText("\n[Server Wrapper] Finished backing up world \"" + WorldName[WorldName.Length - 1] + "\"");
                     });
                 });
             }
+
+            //Open World in Explorer
+            if (sender == Worlds_OpenInExplorer) { Process.Start("explorer.exe", WorkingDirectory + "\\" + WorldsTabListBox.SelectedItem.ToString()); }
+
+            //Delete World
+            if (sender == Worlds_Delete) { Directory.Delete(WorkingDirectory + "\\" + WorldsTabListBox.SelectedItem.ToString()); }
         }
 
         //Managing Server Memory
@@ -720,6 +730,7 @@ namespace Minecraft_Server_Wrapper
             deopAll.IsEnabled = true;
             SendCommand.IsEnabled = true;
 
+            StartStopServer.ToolTip = "Shift Click to Force Stop Server";
             StartStopServer.Content = "Stop Server";
 
             StatusIndicator.Content = "Server is Running | Server Process ID: " + ServerProcess.Id;
@@ -728,7 +739,7 @@ namespace Minecraft_Server_Wrapper
             UpdateCpuRamUsageTimer(true);
         }
 
-        private void OnServerStop()
+        private void OnServerStop(bool ServerForceClose)
         {
             UpdateCpuRamUsageTimer(false);
             ServerIsRunning = false;
@@ -743,7 +754,11 @@ namespace Minecraft_Server_Wrapper
             deopAll.IsEnabled = false;
             SendCommand.IsEnabled = false;
 
-            ServerOutputWindow.AppendText("\nServer Closed");
+            if (ServerForceClose) { ServerOutputWindow.AppendText("\nServer Force Closed"); }
+
+            if (!ServerForceClose && ServerProcess.HasExited) { ServerOutputWindow.AppendText("\nServer Closed"); }
+
+            StartStopServer.IsEnabled = true;
             StartStopServer.Content = "Start Server";
         }
 
@@ -756,18 +771,36 @@ namespace Minecraft_Server_Wrapper
             }
             else
             {
-                //Stop Server
-                UpdateCpuRamUsageTimer(false);
-                ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
-                ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
-                ServerProcess.Kill();
+                //Force Close Server
+                if (Keyboard.Modifiers == ModifierKeys.Shift)
+                {
+                    UpdateCpuRamUsageTimer(false);
+                    ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
+                    ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
+                    ServerProcess.Kill();
 
-                OnServerStop();
-                StatusIndicator.Content = "Server Closed";
-                StatusLightColor(1);
+                    OnServerStop(true);
+                    StatusIndicator.Content = "Server Force Closed";
+                    StatusLightColor(1);
+                }
+                else
+                {
+                    //Stop Server
+                    StartStopServer.IsEnabled = false;
+                    StartStopServer.Content = "Stopping Server";
+                    ServerProcess.StandardInput.WriteLine("stop");
+                    UpdateCpuRamUsageTimer(false);
+                    ServerProcess.OutputDataReceived -= new DataReceivedEventHandler(ServerOutput_OutputDataRecieved);
+                    ServerProcess.Exited -= new EventHandler(ServerClose_Exited);
+
+                    OnServerStop(false);
+                    StatusIndicator.Content = "Server Closed";
+                    StatusLightColor(1);
+                }
             }
         }
 
+        bool ServerOutputWindow_AutoScroll = true;
         //Handle data recieved from server
         private void ServerOutput_OutputDataRecieved(object sender, DataReceivedEventArgs e)
         {
@@ -815,8 +848,8 @@ namespace Minecraft_Server_Wrapper
                 {
 
                 }
-                
-                ServerOutputWindow.ScrollToEnd();
+
+                if (ServerOutputWindow_AutoScroll) { ServerOutputWindow.ScrollToEnd(); }
             });
         }
 
@@ -836,7 +869,7 @@ namespace Minecraft_Server_Wrapper
                     StatusIndicator.Content = "Server Error";
                     StatusLightColor(0);
 
-                    OnServerStop();
+                    OnServerStop(false);
                 }
             }));
         }
@@ -939,7 +972,13 @@ namespace Minecraft_Server_Wrapper
 
         private void ServerOutputWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            while (Keyboard.Modifiers == ModifierKeys.Control)
+            if (Keyboard.Modifiers == ModifierKeys.None)
+            {
+                ServerOutputWindow_AutoScroll = false;
+                ServerOutputWindow_AutoScrollButton.Opacity = 1;
+            }
+
+            if (Keyboard.Modifiers == ModifierKeys.Control)
             {/*
                 //100% scale = font size 12
                 //double scale = Convert.ToDouble(Regex.Replace(ServeroutputWindowScale.Text, "[^0-9]", ""));
@@ -961,6 +1000,13 @@ namespace Minecraft_Server_Wrapper
                     ServeroutputWindowScale.Text = (ServerOutputWindow.FontSize / 12) * 100 + "%";
                 }*/
             }
+        }
+
+        private void ServerOutputWindow_AutoScrollButton_Click(object sender, RoutedEventArgs e)
+        {
+            ServerOutputWindow_AutoScroll = true;
+            ServerOutputWindow_AutoScrollButton.Opacity = 0;
+            ServerOutputWindow.ScrollToEnd();
         }
 
         private void CommandHistory_Execute_Click(object sender, RoutedEventArgs e)
